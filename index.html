@@ -5,34 +5,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Zynuke - 數位毀滅軍火庫 | The Singularity (Merged)</title>
-    
-    <!-- Discord Embed & Open Graph Meta Tags -->
-    <meta property="og:title" content="Zynuke - 數位毀滅軍火庫">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://zynuke.com/">
-    <meta property="og:image" content="https://i.pinimg.com/1200x/13/41/45/13414519583c03a8576b45d6171c11c9.jpg">
-    <meta property="og:description" content="數位廢墟的建築師。瞬間刪除。全域封鎖。無情洗版。當秩序崩塌，Zynuke 便是唯一的法則。">
-    <meta property="og:site_name" content="ZY PROTOCOL">
-    <meta name="theme-color" content="#ff3333"> <!-- 控制 Discord 嵌入卡片左側的邊框顏色 -->
-    
-    <!-- Twitter Card Meta Tags (相容性) -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Zynuke - 數位毀滅軍火庫">
-    <meta name="twitter:description" content="數位廢墟的建築師。瞬間刪除。全域封鎖。無情洗版。當秩序崩塌，Zynuke 便是唯一的法則。">
-    <meta name="twitter:image" content="https://i.pinimg.com/1200x/13/41/45/13414519583c03a8576b45d6171c11c9.jpg">
-    <script src="https://cdn.tailwindcss.com" type="e3860711a854e4771eae8cdc-text/javascript"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&family=JetBrains+Mono:wght@400;700&family=Noto+Sans+TC:wght@400;700;900&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     
     <!-- GSAP & Lenis -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" type="e3860711a854e4771eae8cdc-text/javascript"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" type="e3860711a854e4771eae8cdc-text/javascript"></script>
-    <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js" type="e3860711a854e4771eae8cdc-text/javascript"></script>
-    <script src="https://unpkg.com/split-type" type="e3860711a854e4771eae8cdc-text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+    <script src="https://unpkg.com/split-type"></script>
     
     <!-- Three.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" type="e3860711a854e4771eae8cdc-text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
     <style>
         :root {
@@ -142,8 +127,9 @@
 
         /* Start Screen */
         #start-screen {
-            position: fixed; inset: 0; background: transparent; z-index: 100000;
-            cursor: pointer; overflow: hidden;
+            position: fixed; inset: 0; background: #000; z-index: 100000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            cursor: pointer; transition: opacity 1s ease-out;
         }
         .start-btn {
             border: 1px solid var(--accent-red); padding: 1rem 3rem;
@@ -151,14 +137,6 @@
             transition: all 0.3s; text-transform: uppercase; letter-spacing: 2px;
         }
         .start-btn:hover { background: var(--accent-red); color: black; box-shadow: 0 0 30px var(--accent-red); }
-
-        .intro-dot {
-            top: 50%;
-            left: 50%;
-            margin-top: -8px;
-            margin-left: -8px;
-            will-change: transform;
-        }
 
         .nav-item { display: none; }
         @media (min-width: 768px) { .nav-item { display: block; } }
@@ -191,43 +169,10 @@
 
     <!-- Start Screen Overlay -->
     <div id="start-screen">
-        <div id="shutter-top" class="absolute inset-0 bg-black z-0 pointer-events-none" style="clip-path: polygon(0 0, 100% 0, 100% 100%);"></div>
-        <div id="shutter-bottom" class="absolute inset-0 bg-black z-0 pointer-events-none" style="clip-path: polygon(0 0, 100% 100%, 0 100%);"></div>
-        <div id="meteor-container" class="absolute inset-0 z-0 pointer-events-none overflow-hidden"></div>
-
-        <div class="relative z-10 w-full h-full flex flex-col items-center justify-center">
-            <div id="intro-animation-container" class="relative w-64 h-64 flex items-center justify-center pointer-events-none mb-12">
-                <!-- Rotating container -->
-                <div id="dot-container" class="absolute w-full h-full flex items-center justify-center">
-                    <div class="intro-dot absolute w-4 h-4 bg-red-500 rounded-full shadow-[0_0_20px_#ff3333]" id="dot1"></div>
-                    <div class="intro-dot absolute w-4 h-4 bg-cyan-400 rounded-full shadow-[0_0_20px_#00f3ff]" id="dot2"></div>
-                    <div class="intro-dot absolute w-4 h-4 bg-purple-500 rounded-full shadow-[0_0_20px_#bd00ff]" id="dot3"></div>
-                </div>
-                
-                <!-- Core Ball -->
-                <div id="core-ball" class="absolute w-6 h-6 bg-white rounded-full opacity-0 scale-0 shadow-[0_0_40px_#ffffff,0_0_80px_#ffffff]"></div>
-
-                <!-- Logo SVG -->
-                <div id="logo-container" class="absolute w-full h-full flex items-center justify-center opacity-0 scale-50">
-                    <svg viewBox="0 0 100 100" class="w-40 h-40 drop-shadow-[0_0_15px_rgba(255,51,51,0.6)]">
-                        <!-- Outer Hexagon-ish -->
-                        <polygon points="50,5 89,27.5 89,72.5 50,95 11,72.5 11,27.5" fill="none" stroke="#ff3333" stroke-width="2" />
-                        <!-- Inner Dashed Hexagon -->
-                        <polygon points="50,15 76,32 76,68 50,85 24,68 24,32" fill="none" stroke="#bd00ff" stroke-width="1.5" stroke-dasharray="4 4" />
-                        <!-- Core Z shape -->
-                        <path d="M35 35 L65 35 L35 65 L65 65" fill="none" stroke="#ffffff" stroke-width="6" stroke-linejoin="bevel" stroke-linecap="square"/>
-                        <circle cx="50" cy="50" r="3" fill="#00f3ff" class="animate-pulse" />
-                    </svg>
-                </div>
-            </div>
-
-            <div id="start-content" class="opacity-0 flex flex-col items-center mt-4">
-                <div class="text-4xl md:text-5xl font-black tracking-tighter mb-4 text-white">Zynuke</div>
-                <div class="text-red-500 font-mono mb-8 text-sm animate-pulse tracking-widest text-center">SYSTEM SECURE // CLICK TO ENTER HYPERSPACE</div>
-                <div class="start-btn">INITIALIZE FUSION</div>
-                <div class="mt-4 text-xs text-gray-600 font-mono">Loading Core Modules...</div>
-            </div>
-        </div>
+        <div class="text-4xl font-black tracking-tighter mb-4 text-white">Zynuke</div>
+        <div class="text-red-500 font-mono mb-8 text-sm animate-pulse tracking-widest">SYSTEM SECURE // CLICK TO ENTER HYPERSPACE</div>
+        <div class="start-btn">INITIALIZE FUSION</div>
+        <div class="mt-4 text-xs text-gray-600 font-mono">Loading Core Modules...</div>
     </div>
 
     <div class="noise-overlay"></div>
@@ -328,32 +273,19 @@
 
         <section id="problem" class="min-h-screen flex flex-col justify-center px-6 md:px-12 border-y border-white/10 bg-[#020202]/80 py-20 backdrop-blur-md" data-chapter="CH.03 PROBLEM">
             <div class="max-w-[1200px] mx-auto w-full">
-                <div class="flex items-center gap-4 mb-12 anim-fade">
-                    <svg class="w-10 h-10 md:w-12 md:h-12 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    <h2 class="text-h2-legacy text-left split-text text-white m-0">現有的解決方案<br><span class="text-gray-600">太慢了。</span></h2>
-                </div>
+                <h2 class="text-h2-legacy text-left mb-12 split-text text-white">現有的解決方案<br><span class="text-gray-600">太慢了。</span></h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="bento-card anim-card p-6">
-                        <svg class="w-8 h-8 text-red-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                        <h3 class="text-xl font-bold text-white mb-2">API 限制</h3><p class="text-sm text-gray-400">傳統機器人受限於 Discord 每秒請求數 (Rate Limits)。</p>
-                    </div>
-                    <div class="bento-card anim-card p-6" style="transition-delay:0.1s">
-                        <svg class="w-8 h-8 text-yellow-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <h3 class="text-xl font-bold text-white mb-2">單線程瓶頸</h3><p class="text-sm text-gray-400">無法同時處理大量的封鎖請求，效率低落。</p>
-                    </div>
-                    <div class="bento-card anim-card p-6" style="transition-delay:0.2s">
-                        <svg class="w-8 h-8 text-cyan-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                        <h3 class="text-xl font-bold text-white mb-2">容易被偵測</h3><p class="text-sm text-gray-400">簡單的 Python 腳本很快就會被 Discord 安全系統封鎖。</p>
-                    </div>
+                    <div class="bento-card anim-card"><h3 class="text-xl font-bold text-white mb-2">API 限制</h3><p class="text-sm text-gray-400">傳統機器人受限於 Discord 每秒請求數 (Rate Limits)。</p></div>
+                    <div class="bento-card anim-card" style="transition-delay:0.1s"><h3 class="text-xl font-bold text-white mb-2">單線程瓶頸</h3><p class="text-sm text-gray-400">無法同時處理大量的封鎖請求，效率低落。</p></div>
+                    <div class="bento-card anim-card" style="transition-delay:0.2s"><h3 class="text-xl font-bold text-white mb-2">容易被偵測</h3><p class="text-sm text-gray-400">簡單的 Python 腳本很快就會被 Discord 安全系統封鎖。</p></div>
                 </div>
             </div>
         </section>
 
         <section id="solution" class="min-h-screen flex items-center justify-center px-6 md:px-12 border-y border-white/10 bg-black" data-chapter="CH.04 PROTOCOL">
-            <div class="max-w-[1200px] mx-auto w-full text-center flex flex-col items-center">
-                <svg class="w-16 h-16 text-cyan-400 mb-6 animate-pulse drop-shadow-[0_0_15px_rgba(0,243,255,0.6)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+            <div class="max-w-[1200px] mx-auto w-full text-center">
                 <div class="text-cyan-400 font-mono mb-4 animate-pulse">SYSTEM OVERRIDE</div>
-                <h2 class="text-hero text-white split-text">ZY PROTOCOL</h2>
+                <h2 class="text-hero text-white split-text">LYRA PROTOCOL</h2>
                 <p class="text-xl text-gray-400 mx-auto mt-8 anim-fade max-w-2xl">我們重寫了底層邏輯，利用 <span class="text-white">Asyncio 非阻塞架構</span>，繞過限制，實現真正的並發攻擊。</p>
             </div>
         </section>
@@ -369,12 +301,7 @@
             <div class="max-w-[1800px] mx-auto w-full relative z-10">
                 <div class="mb-12 md:mb-20 flex flex-col md:flex-row justify-between items-end">
                     <div>
-                        <div class="text-xs md:text-sm font-mono text-purple-400 mb-4 anim-fade flex items-center gap-2">
-                            <svg class="w-5 h-5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                            </svg>
-                            MODULE ALPHA: SWARM
-                        </div>
+                        <div class="text-xs md:text-sm font-mono text-purple-400 mb-4 anim-fade">MODULE ALPHA: SWARM</div>
                         <h2 class="text-4xl md:text-8xl font-bold tracking-tighter text-white split-text">Hyper Warp<br>通訊癱瘓協議</h2>
                     </div>
                     <div class="text-right hidden md:block">
@@ -385,10 +312,7 @@
                 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="bento-card p-6 md:p-8 min-h-[300px] flex flex-col justify-between anim-card" data-tilt>
-                        <div class="font-mono text-sm text-gray-500 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                            蜂群意識 (HIVE MIND)
-                        </div>
+                        <div class="font-mono text-sm text-gray-500">蜂群意識 (HIVE MIND)</div>
                         <div>
                             <p class="text-gray-300 text-lg mb-4">這不只是發送訊息。50 個 Token 同時運作，瞬間淹沒任何人類的對話嘗試。</p>
                             <p class="text-gray-500 text-sm font-mono">> 2,400 MESSAGES / SEC</p>
@@ -397,10 +321,7 @@
                     <!-- Code Card from 2.html -->
                     <div class="bento-card p-6 md:p-8 min-h-[300px] flex flex-col justify-between col-span-1 md:col-span-2 anim-card" data-tilt style="transition-delay: 0.1s">
                         <div class="flex justify-between items-center">
-                            <div class="font-mono text-sm text-gray-500 flex items-center gap-2">
-                                <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg>
-                                CORE KERNEL
-                            </div>
+                            <div class="font-mono text-sm text-gray-500">CORE KERNEL</div>
                             <div class="text-xs text-red-500 font-mono animate-pulse">LIVE EXECUTION</div>
                         </div>
                         <pre class="text-xs md:text-sm text-gray-400 font-mono overflow-x-auto whitespace-pre-wrap break-all md:whitespace-pre">
@@ -422,12 +343,7 @@
         <section class="min-h-screen flex items-center px-6 md:px-12 border-y border-white/10 bg-black/70 py-20 backdrop-blur-sm" data-chapter="CH.06 SHIELD">
             <div class="max-w-[1800px] mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <div class="order-2 lg:order-1">
-                    <div class="flex items-center gap-4 mb-6 anim-fade">
-                        <svg class="w-10 h-10 md:w-14 md:h-14 text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-                        </svg>
-                        <h2 class="text-4xl md:text-5xl font-bold split-text text-white m-0">絕對霸權<br>防禦機制</h2>
-                    </div>
+                    <h2 class="text-4xl md:text-5xl font-bold mb-6 split-text text-white">絕對霸權<br>防禦機制</h2>
                     <p class="text-gray-400 mb-8">這不只是矛，也是盾。我們保護付費者。</p>
                     <ul class="space-y-6 font-mono text-sm text-gray-300 border-l border-white/20 pl-6 anim-stagger-list">
                         <li class="flex items-center justify-between border-b border-white/10 pb-2">
@@ -466,13 +382,8 @@
             <div class="max-w-[1800px] mx-auto w-full relative z-10">
                 <div class="flex flex-col md:flex-row justify-between items-end mb-12 md:mb-20">
                     <div>
-                        <div class="text-xs md:text-sm font-mono text-red-500 mb-4 anim-fade flex items-center gap-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                            </svg>
-                            MODULE BETA: SCORCHED EARTH
-                        </div>
-                        <h2 class="text-4xl md:text-8xl font-bold tracking-tighter text-white split-text">ZY Studio<br>歸零引擎</h2>
+                        <div class="text-xs md:text-sm font-mono text-red-500 mb-4 anim-fade">MODULE BETA: SCORCHED EARTH</div>
+                        <h2 class="text-4xl md:text-8xl font-bold tracking-tighter text-white split-text">NeverForget<br>歸零引擎</h2>
                     </div>
                     <div class="text-right hidden md:block anim-fade">
                         <div class="text-red-500 font-bold text-xl">v2.0</div>
@@ -482,93 +393,24 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div class="bento-card p-6 border-red-500/30 anim-card group min-h-[150px]" data-tilt>
-                        <div class="text-red-500 text-lg font-bold mb-2 flex items-center gap-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                            抹除 (ERASE)
-                        </div>
+                        <div class="text-red-500 text-lg font-bold mb-2">抹除 (ERASE)</div>
                         <p class="text-sm text-gray-400">非同步並行刪除所有頻道與身分組。</p>
                         <div class="absolute bottom-0 left-0 w-full h-1 bg-red-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
                     </div>
                     <div class="bento-card p-6 border-red-500/30 anim-card group min-h-[150px]" style="transition-delay: 0.1s" data-tilt>
-                        <div class="text-red-500 text-lg font-bold mb-2 flex items-center gap-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
-                            污染 (POLLUTE)
-                        </div>
+                        <div class="text-red-500 text-lg font-bold mb-2">污染 (POLLUTE)</div>
                         <p class="text-sm text-gray-400">瞬間生成 200+ 個垃圾頻道。</p>
                         <div class="absolute bottom-0 left-0 w-full h-1 bg-red-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
                     </div>
                     <div class="bento-card p-6 border-red-500/30 anim-card group min-h-[150px]" style="transition-delay: 0.2s" data-tilt>
-                        <div class="text-red-500 text-lg font-bold mb-2 flex items-center gap-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
-                            清洗 (PURGE)
-                        </div>
+                        <div class="text-red-500 text-lg font-bold mb-2">清洗 (PURGE)</div>
                         <p class="text-sm text-gray-400">以 100 人為單位的批量封鎖。</p>
                         <div class="absolute bottom-0 left-0 w-full h-1 bg-red-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
                     </div>
                     <div class="bento-card p-6 border-red-500/30 anim-card group min-h-[150px]" style="transition-delay: 0.3s" data-tilt>
-                        <div class="text-red-500 text-lg font-bold mb-2 flex items-center gap-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"></path></svg>
-                            佔領 (CONQUER)
-                        </div>
-                        <p class="text-sm text-gray-400">強制更名為 "【𝙉𝙐𝙆𝙀 𝘽𝙔 𝙕𝙔】"。</p>
+                        <div class="text-red-500 text-lg font-bold mb-2">佔領 (CONQUER)</div>
+                        <p class="text-sm text-gray-400">強制更名為 "nuke by NeverForget"。</p>
                         <div class="absolute bottom-0 left-0 w-full h-1 bg-red-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ========================================= -->
-        <!-- CHAPTER 6.5: TOTAL DOMINATION -->
-        <!-- ========================================= -->
-
-        <section id="domination" class="min-h-screen flex flex-col justify-center px-6 md:px-12 border-y border-white/10 bg-[#0a0a0f]/80 relative py-20 backdrop-blur-md" data-chapter="CH.07.5 DOMINATION">
-            <div class="max-w-[1800px] mx-auto w-full relative z-10">
-                <div class="flex flex-col md:flex-row justify-between items-end mb-12 md:mb-20">
-                    <div>
-                        <div class="text-xs md:text-sm font-mono text-cyan-400 mb-4 anim-fade flex items-center gap-2">
-                            <svg class="w-5 h-5 animate-[spin_4s_linear_infinite]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                            MODULE GAMMA: OMNISCIENCE
-                        </div>
-                        <h2 class="text-4xl md:text-8xl font-bold tracking-tighter text-white split-text">全方位統治<br>控制面板</h2>
-                    </div>
-                    <div class="text-right hidden md:block anim-fade">
-                        <div class="text-cyan-400 font-bold text-xl">V1.0 UPDATE</div>
-                        <div class="text-gray-500 font-mono">BEYOND NUKING</div>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div class="bento-card p-6 border-cyan-400/30 anim-card group min-h-[150px]" data-tilt>
-                        <div class="text-cyan-400 text-lg font-bold mb-2 flex items-center gap-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
-                            語音挾持 (VOICE)
-                        </div>
-                        <p class="text-sm text-gray-400">一鍵全員靜音、強制踢出，甚至將所有人隨機丟入不同語音頻道製造混亂。</p>
-                        <div class="absolute bottom-0 left-0 w-full h-1 bg-cyan-400 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
-                    </div>
-                    <div class="bento-card p-6 border-cyan-400/30 anim-card group min-h-[150px]" style="transition-delay: 0.1s" data-tilt>
-                        <div class="text-cyan-400 text-lg font-bold mb-2 flex items-center gap-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                            身分竄改 (IDENTITY)
-                        </div>
-                        <p class="text-sm text-gray-400">瞬間強制修改全伺服器成員的暱稱，或無差別全部封禁 (ban_all)。</p>
-                        <div class="absolute bottom-0 left-0 w-full h-1 bg-cyan-400 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
-                    </div>
-                    <div class="bento-card p-6 border-cyan-400/30 anim-card group min-h-[150px]" style="transition-delay: 0.2s" data-tilt>
-                        <div class="text-cyan-400 text-lg font-bold mb-2 flex items-center gap-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
-                            無痕滲透 (STEALTH)
-                        </div>
-                        <p class="text-sm text-gray-400">發送隱形的 @everyone 後瞬間刪除，讓所有人收到通知卻找不到來源。</p>
-                        <div class="absolute bottom-0 left-0 w-full h-1 bg-cyan-400 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
-                    </div>
-                    <div class="bento-card p-6 border-cyan-400/30 anim-card group min-h-[150px]" style="transition-delay: 0.3s" data-tilt>
-                        <div class="text-cyan-400 text-lg font-bold mb-2 flex items-center gap-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
-                            架構重組 (SHUFFLE)
-                        </div>
-                        <p class="text-sm text-gray-400">一鍵打亂所有頻道與身分組的排列順序，讓伺服器版面徹底陷入混亂。</p>
-                        <div class="absolute bottom-0 left-0 w-full h-1 bg-cyan-400 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
                     </div>
                 </div>
             </div>
@@ -578,47 +420,22 @@
         <!-- CHAPTER 7: ENTROPY (Lag + Marquee) -->
         <!-- ========================================= -->
 
-        <section class="min-h-screen flex items-center justify-center px-6 md:px-12 border-y border-white/10 overflow-hidden relative bg-black/95" data-chapter="CH.08 ENTROPY" id="entropy-section">
+        <section class="min-h-screen flex items-center justify-center px-6 md:px-12 border-y border-white/10 overflow-hidden relative bg-black/95" data-chapter="CH.08 ENTROPY">
             <!-- Animated Marquee Background -->
-            <div class="lag-marquee-container opacity-20">
+            <div class="lag-marquee-container">
                 <div class="lag-marquee-track" id="lag-track-1">
                     <!-- JS populated -->
                 </div>
             </div>
             
-            <!-- DC Bombardment Container -->
-            <div id="dc-bombard-container" class="absolute inset-0 pointer-events-none z-0 overflow-hidden"></div>
-
-            <div class="relative z-10 w-full max-w-[1800px] grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                
-                <!-- Left Side: Copy & Text -->
-                <div class="flex flex-col items-start" id="unicode-text-source">
-                    <h2 class="text-4xl md:text-8xl font-black mb-8 tracking-tighter text-white split-text glitch-wrapper drop-shadow-[0_0_15px_rgba(255,51,51,0.5)]">
-                        UNICODE<br>OVERLOAD
-                    </h2>
-                    
-                    <div class="bg-black/60 p-6 md:p-8 rounded-lg border border-red-500/30 backdrop-blur-md anim-fade w-full">
-                        <p class="text-lg md:text-xl text-gray-300 font-mono leading-relaxed">
-                            不僅是炸群，更是對硬體的攻擊。<br><br>
-                            <span class="text-red-400 font-bold bg-red-950/50 px-3 py-1 border border-red-500/50 inline-block shadow-[0_0_10px_rgba(255,51,51,0.3)]">> lag.txt EXECUTED</span><br><br>
-                            <span class="text-sm md:text-base text-gray-500">載荷包含極端 Unicode 特殊編碼，旨在瞬間凍結、崩潰受害者的 Discord 客戶端。</span>
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Right Side: Discord Logo Target -->
-                <div class="flex justify-center items-center h-full relative">
-                    <div class="relative flex justify-center items-center w-48 h-48 md:w-64 md:h-64">
-                        <!-- The Discord Logo -->
-                        <svg id="dc-logo-target" class="w-32 h-32 md:w-48 md:h-48 text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.8)] z-10 relative" fill="currentColor" viewBox="0 0 127.14 96.36" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.31,60,73.31,53s5-12.74,11.43-12.74S96.3,46,96.19,53,91.08,65.69,84.69,65.69Z"/>
-                        </svg>
-                        <!-- Intense pulse rings -->
-                        <div class="absolute inset-0 border-[4px] border-red-500 rounded-full animate-[ping_1s_cubic-bezier(0,0,0.2,1)_infinite] opacity-50 pointer-events-none"></div>
-                        <div class="absolute inset-0 border-[4px] border-red-500 rounded-full animate-[ping_1.5s_cubic-bezier(0,0,0.2,1)_infinite] opacity-30 pointer-events-none delay-75"></div>
-                    </div>
-                </div>
-
+            <div class="relative z-10 text-center">
+                <h2 class="text-4xl md:text-9xl font-black mb-4 tracking-tighter text-white mix-blend-difference split-text glitch-wrapper">
+                    UNICODE<br>OVERLOAD
+                </h2>
+                <p class="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto anim-fade">
+                    不僅是炸群，更是對硬體的攻擊。<br>
+                    <span class="text-white font-mono">lag.txt</span> 載荷包含特殊編碼，旨在凍結受害者的 Discord 客戶端。
+                </p>
             </div>
         </section>
 
@@ -629,9 +446,6 @@
         <section class="min-h-screen flex items-center px-6 md:px-12 border-y border-white/10 bg-[#050505]/90 relative py-20 backdrop-blur-md" data-chapter="CH.09 TERMINAL">
             <div class="max-w-[1200px] mx-auto w-full relative z-10">
                 <div class="mb-12 text-center">
-                    <div class="flex justify-center mb-4 anim-fade">
-                        <svg class="w-12 h-12 text-white opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                    </div>
                     <h2 class="text-4xl font-bold mb-4 split-text text-white">戰術控制台</h2>
                     <p class="text-gray-400 anim-fade">直接體驗控制混亂的快感。輸入指令，發動災難。</p>
                 </div>
@@ -643,7 +457,7 @@
                             <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
                             <div class="w-3 h-3 rounded-full bg-green-500"></div>
                         </div>
-                        <div class="ml-4 text-xs font-mono text-gray-500">admin@zynuke:~/weapons</div>
+                        <div class="ml-4 text-xs font-mono text-gray-500">admin@lyrahub:~/weapons</div>
                     </div>
                     <div class="p-6 h-[300px] md:h-[400px] font-mono text-sm overflow-y-auto relative" id="terminal-output">
                         <div class="text-gray-500 mb-2"># Initializing Weapon Systems...</div>
@@ -659,10 +473,10 @@
                 </div>
                 
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 anim-stagger-list">
-                    <button onclick="if (!window.__cfRLUnblockHandlers) return false; runCmd('.execute')" class="border border-white/20 py-4 text-sm font-mono text-white hover:bg-red-900/30 transition-colors" data-cf-modified-e3860711a854e4771eae8cdc-="">.execute (Nuke)</button>
-                    <button onclick="if (!window.__cfRLUnblockHandlers) return false; runCmd('.voice_shuffle')" class="border border-white/20 py-4 text-sm font-mono text-white hover:bg-cyan-900/30 transition-colors" data-cf-modified-e3860711a854e4771eae8cdc-="">.voice_shuffle</button>
-                    <button onclick="if (!window.__cfRLUnblockHandlers) return false; runCmd('.stealth_ping')" class="border border-white/20 py-4 text-sm font-mono text-white hover:bg-purple-900/30 transition-colors" data-cf-modified-e3860711a854e4771eae8cdc-="">.stealth_ping</button>
-                    <button onclick="if (!window.__cfRLUnblockHandlers) return false; runCmd('.dmenu')" class="border border-white/20 py-4 text-sm font-mono text-white hover:bg-gray-800 transition-colors" data-cf-modified-e3860711a854e4771eae8cdc-="">.dmenu</button>
+                    <button onclick="runCmd('!spam_dm target')" class="border border-white/20 py-4 text-sm font-mono text-white hover:bg-red-900/30 transition-colors">!spam_dm</button>
+                    <button onclick="runCmd('!nuke_cmd')" class="border border-white/20 py-4 text-sm font-mono text-white hover:bg-red-900/30 transition-colors">!nuke_cmd</button>
+                    <button onclick="runCmd('/spam lag')" class="border border-white/20 py-4 text-sm font-mono text-white hover:bg-red-900/30 transition-colors">/spam lag</button>
+                    <button onclick="runCmd('sys_status')" class="border border-white/20 py-4 text-sm font-mono text-white hover:bg-red-900/30 transition-colors">sys_status</button>
                 </div>
             </div>
         </section>
@@ -674,35 +488,32 @@
         <section id="team" class="min-h-screen flex items-center justify-center px-6 md:px-12 border-y border-white/10 relative py-20 bg-black/80 backdrop-blur-sm" data-chapter="CH.10 ARCHITECTS">
             <div class="max-w-[1800px] mx-auto w-full">
                 <div class="mb-20 text-center">
-                    <div class="text-sm font-mono text-gray-500 mb-4 anim-fade flex items-center justify-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                        THE ARCHITECTS
-                    </div>
+                    <div class="text-sm font-mono text-gray-500 mb-4 anim-fade">THE ARCHITECTS</div>
                     <h2 class="text-5xl md:text-7xl font-bold tracking-tighter mb-8 split-text text-white">核心團隊</h2>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                     <!-- Members -->
                     <div class="bento-card member-card p-8 flex flex-col items-center text-center anim-card" data-tilt>
                         <div class="w-32 h-32 rounded-full overflow-hidden mb-6 border-2 border-white/10 relative">
-                            <img src="https://zynuke.lol/api/123.jpg" alt="Light" class="member-avatar w-full h-full object-cover">
+                            <img src="https://cdn.discordapp.com/avatars/1402475195360481320/fdb4c522cc0006af784afb0dbf7cd291.webp?size=1024" alt="Light" class="member-avatar w-full h-full object-cover">
                         </div>
                         <h3 class="text-2xl font-bold mb-2 text-white">light</h3>
                         <p class="text-sm text-gray-400 font-mono italic">「這裡曾經有個人，後來他連『曾經』都不配有了。」</p>
                     </div>
                     <div class="bento-card member-card p-8 flex flex-col items-center text-center anim-card" style="transition-delay: 0.1s" data-tilt>
                         <div class="w-32 h-32 rounded-full overflow-hidden mb-6 border-2 border-white/10 relative">
-                            <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="e3860711a854e4771eae8cdc-|49"></script><img src="https://cdn.discordapp.com/avatars/842335426848358430/69f677d33b00024be3bfc50067a17c9a.webp?size=1024" onerror="this.src='https://ui-avatars.com/api/?name=sangre&background=random&color=fff'" alt="sangre" class="member-avatar w-full h-full object-cover">
+                            <img src="https://cdn.discordapp.com/attachments/1443927726208712776/1443933484589777047/hidden-face-pfp-39.jpg?ex=692cd999&is=692b8819&hm=69b740f88e3fd2610c040a642477136be18d0a5bf63cfe38a9485aa8c4f38b69&" onerror="this.src='https://ui-avatars.com/api/?name=FALED&background=random&color=fff'" alt="FALED" class="member-avatar w-full h-full object-cover">
                         </div>
-                        <h3 class="text-2xl font-bold mb-2 text-white">sangre</h3>
-                        <p class="text-sm text-gray-400 font-mono italic">Why did you.......come to see me?</p>
+                        <h3 class="text-2xl font-bold mb-2 text-white">FALED</h3>
+                        <p class="text-sm text-gray-500 font-mono italic opacity-50">(這個人非常懶惰完全不想寫個性簽名)</p>
                     </div>
                     <div class="bento-card member-card p-8 flex flex-col items-center text-center anim-card" style="transition-delay: 0.2s" data-tilt>
                         <div class="w-32 h-32 rounded-full overflow-hidden mb-6 border-2 border-white/10 relative">
-                            <img src="https://cdn.discordapp.com/avatars/1124325505072644226/7f02b4efeb9779d6e7b329273fe4da17.webp?size=1024" alt="陳思琪" class="member-avatar w-full h-full object-cover">
+                            <img src="https://cdn.discordapp.com/avatars/1111921558114553876/b0e629b96159b03fcc3391f7354972d4.webp?size=1024" alt="勞氏萊斯" class="member-avatar w-full h-full object-cover">
                         </div>
-                        <h3 class="text-2xl font-bold mb-2 text-white">沒理由不愛乃依吧~💕</h3>
-                        <p class="text-sm text-gray-400 font-mono italic">求有人射爆我，乃依太香了</p>
+                        <h3 class="text-2xl font-bold mb-2 text-white">勞氏萊斯</h3>
+                        <p class="text-sm text-gray-400 font-mono italic">Jim</p>
                     </div>
                     <div class="bento-card member-card p-8 flex flex-col items-center text-center anim-card" style="transition-delay: 0.3s" data-tilt>
                         <div class="w-32 h-32 rounded-full overflow-hidden mb-6 border-2 border-white/10 relative">
@@ -710,13 +521,6 @@
                         </div>
                         <h3 class="text-2xl font-bold mb-2 text-white">IE</h3>
                         <p class="text-sm text-gray-400 font-mono italic">Light是gay</p>
-                    </div>
-                    <div class="bento-card member-card p-8 flex flex-col items-center text-center anim-card" style="transition-delay: 0.4s" data-tilt>
-                        <div class="w-32 h-32 rounded-full overflow-hidden mb-6 border-2 border-white/10 relative">
-                            <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="e3860711a854e4771eae8cdc-|49"></script><img src="https://zynuke.lol/api/20250920_140024_0000.png" onerror="this.src='https://ui-avatars.com/api/?name=4RN3&background=random&color=fff'" alt="4RN3" class="member-avatar w-full h-full object-cover">
-                        </div>
-                        <h3 class="text-2xl font-bold mb-2 text-white">4RN3</h3>
-                        <p class="text-sm text-gray-400 font-mono italic">註冊商標啦 魏蓮洋</p>
                     </div>
                 </div>
             </div>
@@ -732,10 +536,7 @@
         <section id="services" class="min-h-screen flex items-center justify-center px-6 md:px-12 border-y border-white/10 relative bg-[#050505]/80 py-20 backdrop-blur-md" data-chapter="CH.11 CONTRACTS">
             <div class="max-w-[1800px] mx-auto w-full">
                 <div class="mb-20 text-center">
-                    <div class="text-sm font-mono text-gray-500 mb-4 anim-fade flex items-center justify-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                        MERCENARY CONTRACTS
-                    </div>
+                    <div class="text-sm font-mono text-gray-500 mb-4 anim-fade">MERCENARY CONTRACTS</div>
                     <h2 class="text-5xl md:text-7xl font-bold tracking-tighter mb-8 split-text text-white">服務與報價</h2>
                     <p class="text-gray-400 max-w-2xl mx-auto anim-fade">
                         提供專業客製化開發與自架託管服務。所有交易均透過 Ticket 私訊進行。
@@ -783,7 +584,7 @@
                     <div class="bento-card p-8 border-l-4 border-l-red-500 lg:col-span-3 anim-card min-h-[200px] flex flex-col items-center justify-center text-center" style="transition-delay: 0.4s" data-tilt>
                         <h3 class="text-3xl font-bold text-white mb-4">帳號取得與教學</h3>
                          <p class="text-gray-400 text-sm mb-6">提供專業帳號取得服務，或購買完整的技術教學課程 (BLACK OPS)。</p>
-                         <a href="https://discord.gg/481" target="_blank" class="px-8 py-3 bg-red-600 text-white font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-colors">Open Ticket</a>
+                         <a href="https://discord.gg/zVntvpcJ" target="_blank" class="px-8 py-3 bg-red-600 text-white font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-colors">Open Ticket</a>
                     </div>
                 </div>
             </div>
@@ -797,13 +598,13 @@
                     Join the Legion.
                 </h2>
                 <div class="flex flex-col md:flex-row gap-6 justify-center items-center mt-12 anim-fade">
-                    <a href="https://discord.gg/481" target="_blank" class="px-12 py-5 bg-white text-black text-xl font-bold tracking-tight hover:bg-red-600 hover:text-white transition-colors w-full md:w-auto">
+                    <a href="https://discord.gg/zVntvpcJ" target="_blank" class="px-12 py-5 bg-white text-black text-xl font-bold tracking-tight hover:bg-red-600 hover:text-white transition-colors w-full md:w-auto">
                         加入 Discord
                     </a>
                 </div>
                 <p class="mt-12 text-gray-500 text-sm font-mono anim-fade">
                     &copy; 2025 Zynuke. All systems armed.<br>
-                    Powered by ZY Protocol & ZY Studio Engine.
+                    Powered by Hyper Warp Protocol & NeverForget Engine.
                 </p>
             </div>
         </section>
@@ -812,147 +613,25 @@
 
     </div> <!-- End Viewport -->
 
-    <script type="e3860711a854e4771eae8cdc-text/javascript">
+    <script>
         // Start Screen Logic
         document.addEventListener('DOMContentLoaded', () => {
             const startScreen = document.getElementById('start-screen');
             const bgm = document.getElementById('bg-music');
             
+            // Set volume to 45%
             bgm.volume = 0.20;
-            let isReady = false;
-
-            // Intro Animation Sequence
-            gsap.set('#dot1', { x: window.innerWidth, y: -150 });
-            gsap.set('#dot2', { x: window.innerWidth, y: 0 });
-            gsap.set('#dot3', { x: window.innerWidth, y: 150 });
-            
-            const introTl = gsap.timeline({
-                onComplete: () => {
-                    isReady = true;
-                }
-            });
-
-            // Generate meteor elements
-            const meteorContainer = document.getElementById('meteor-container');
-            const meteorCount = 50;
-            for(let i=0; i<meteorCount; i++) {
-                let m = document.createElement('div');
-                m.className = 'absolute opacity-0';
-                m.style.width = (100 + Math.random() * 200) + 'px';
-                m.style.height = (2 + Math.random() * 2) + 'px';
-                m.style.background = 'linear-gradient(to right, transparent, rgba(255,255,255,1))';
-                m.style.transform = 'rotate(45deg)';
-                m.style.transformOrigin = 'right center';
-                m.style.boxShadow = '2px 0 15px rgba(255,255,255,1)';
-                m.style.borderRadius = '999px';
-                meteorContainer.appendChild(m);
-            }
-
-            // Explosion Ring
-            const explosionRing = document.createElement('div');
-            explosionRing.className = 'absolute w-10 h-10 border-2 border-white rounded-full opacity-0 scale-0 pointer-events-none';
-            explosionRing.style.top = '50%';
-            explosionRing.style.left = '50%';
-            explosionRing.style.marginTop = '-20px';
-            explosionRing.style.marginLeft = '-20px';
-            document.getElementById('intro-animation-container').appendChild(explosionRing);
-
-            introTl
-              .to('#dot1', { x: 0, y: -50, duration: 1.2, ease: 'power3.out' }, 0)
-              .to('#dot2', { x: -45, y: 35, duration: 1.2, ease: 'power3.out' }, 0.1)
-              .to('#dot3', { x: 45, y: 35, duration: 1.2, ease: 'power3.out' }, 0.2)
-              // Rotate slowly
-              .to('#dot-container', { rotation: 180, duration: 1.5, ease: 'power1.inOut' }, "+=0.2")
-              // Accelerate rotation
-              .to('#dot-container', { rotation: "+=1080", duration: 1.5, ease: 'power2.in' })
-              // Dots collapse into center
-              .to('.intro-dot', { x: 0, y: 0, scale: 0, duration: 0.4, ease: 'back.in(2)' }, "-=0.4")
-              
-              // Ball core appears
-              .to('#core-ball', { scale: 1, opacity: 1, duration: 0.3, ease: 'back.out(2)' }, "-=0.2")
-              // Ball pulses
-              .to('#core-ball', { scale: 1.4, duration: 0.15, yoyo: true, repeat: 1 })
-              // Ball shrinks rapidly before exploding
-              .to('#core-ball', { scale: 0, opacity: 0, duration: 0.15, ease: 'power3.in' })
-
-              // Explosion Ring
-              .fromTo(explosionRing, 
-                  { scale: 0, opacity: 1 }, 
-                  { scale: 15, opacity: 0, duration: 0.8, ease: 'power2.out' }, 
-                  "-=0.1"
-              )
-
-              // BOOM! Logo appears
-              .fromTo('#logo-container', 
-                  { scale: 0.2, opacity: 0, rotation: -90 }, 
-                  { scale: 1, opacity: 1, rotation: 0, duration: 1.2, ease: 'elastic.out(1, 0.4)' },
-                  "-=0.8"
-              )
-              // Logo glow pulse
-              .to('#logo-container svg', { filter: 'drop-shadow(0px 0px 30px rgba(255,51,51,1))', duration: 0.5, yoyo: true, repeat: 1 }, "-=1")
-              // Fade in text
-              .to('#start-content', { opacity: 1, y: -20, duration: 1, ease: 'power2.out' }, "-=0.8");
-
-            // Add meteor shower shooting from top-left to bottom-right
-            introTl.add(() => {
-                const meteors = meteorContainer.children;
-                const distance = Math.max(window.innerWidth, window.innerHeight) * 2;
-                for(let i=0; i<meteors.length; i++) {
-                    const el = meteors[i];
-                    const offset = (Math.random() - 0.5) * window.innerWidth * 1.5;
-                    const spawnX = -300 + offset;
-                    const spawnY = -300 - offset;
-                    const delay = Math.random() * 0.8;
-                    const duration = 0.6 + Math.random() * 0.8;
-
-                    gsap.fromTo(el, 
-                        { x: spawnX, y: spawnY },
-                        { x: spawnX + distance, y: spawnY + distance, duration: duration, ease: 'none', delay: delay }
-                    );
-                    
-                    gsap.fromTo(el, 
-                        { opacity: 0 },
-                        { opacity: 1, duration: 0.2, delay: delay }
-                    );
-                    
-                    gsap.to(el, { opacity: 0, duration: 0.3, delay: delay + duration - 0.3 });
-                }
-            }, "-=1.0");
 
             const initSite = () => {
-                if (!isReady) return;
-                
                 // Play Audio
                 bgm.play().catch(e => console.log("Audio play failed:", e));
                 
-                // Hide content first
-                gsap.to(['#intro-animation-container', '#start-content'], { 
-                    opacity: 0, 
-                    scale: 1.5,
-                    duration: 0.5, 
-                    ease: "power2.in"
-                });
-
-                // Shutter split animation
-                gsap.to('#shutter-top', {
-                    xPercent: 100,
-                    yPercent: -100,
-                    duration: 1.2,
-                    ease: 'power3.inOut',
-                    delay: 0.2
-                });
-                
-                gsap.to('#shutter-bottom', {
-                    xPercent: -100,
-                    yPercent: 100,
-                    duration: 1.2,
-                    ease: 'power3.inOut',
-                    delay: 0.2,
-                    onComplete: () => {
-                        startScreen.style.display = 'none';
-                        gsap.to('#navbar', { opacity: 1, duration: 1 });
-                    }
-                });
+                // Fade out start screen
+                startScreen.style.opacity = '0';
+                setTimeout(() => {
+                    startScreen.style.display = 'none';
+                    gsap.to('#navbar', { opacity: 1, duration: 1 });
+                }, 1000);
             };
 
             startScreen.addEventListener('click', initSite);
@@ -1008,10 +687,8 @@
             ];
 
             for(let i = 0; i < particleCount; i++) {
-                const radius = 6000 * Math.sqrt(Math.random());
-                const theta = Math.random() * 2 * Math.PI;
-                const x = radius * Math.cos(theta);
-                const y = radius * Math.sin(theta);
+                const x = (Math.random() - 0.5) * 10000;
+                const y = (Math.random() - 0.5) * 10000;
                 const z = (Math.random() - 0.5) * 10000;
                 
                 posArray[i * 3] = x;
@@ -1112,10 +789,8 @@
                     positions[i] += speed;
                     if (positions[i] > 1000) {
                         positions[i] = -8000; 
-                        const radius = 6000 * Math.sqrt(Math.random());
-                        const theta = Math.random() * 2 * Math.PI;
-                        positions[i-2] = radius * Math.cos(theta);
-                        positions[i-1] = radius * Math.sin(theta);
+                        positions[i-1] = (Math.random() - 0.5) * 10000;
+                        positions[i-2] = (Math.random() - 0.5) * 10000;
                     }
                 }
                 starsMesh.geometry.attributes.position.needsUpdate = true;
@@ -1226,7 +901,7 @@
                 output.scrollTop = output.scrollHeight;
             }
 
-            // Lag Marquee & Bombardment Effect
+            // Lag Marquee (From 2.html & 123)
             const lagTextContent = " @everyone 틓탑컏쳍쫋죉웇쓅싃상뺿벽못뢹뚷뒵늳낱꺯겭ꪫꢩꚧ꒥ꊣꂡ麟鲝骛颙隗钕銓邑躏貍誋袉蚇蒅芃肁繿籽穻硹癷瑵牳灱湯汭橫桩晧摥扣恡幟屝婛塙噗呕剓偑乏䱍䩋䡉䙇䑅䉃䁁㸿㰽㨻㠹㘷㐵㈳〱ⸯⰭ⨫⠩☧␥∣‡ḟᰝᨛ᠙ᘗᐕሓထฏ఍਋ࠉ؇Ѕȃ";
             const lagContainer = document.getElementById('lag-track-1');
             if (lagContainer) {
@@ -1243,106 +918,7 @@
                     xPercent: -50, ease: "none", duration: 30, repeat: -1
                 });
             }
-
-            // --- DC Bombardment ---
-            const entropySection = document.getElementById('entropy-section');
-            const dcBombardContainer = document.getElementById('dc-bombard-container');
-            const dcLogoTarget = document.getElementById('dc-logo-target');
-            const textSource = document.getElementById('unicode-text-source');
-            
-            if (entropySection && dcBombardContainer && dcLogoTarget && textSource) {
-                // Spawn text crashing into logo
-                let spawnInterval;
-                ScrollTrigger.create({
-                    trigger: entropySection,
-                    start: "top 80%",
-                    end: "bottom 20%",
-                    onEnter: () => startBombardment(),
-                    onEnterBack: () => startBombardment(),
-                    onLeave: () => stopBombardment(),
-                    onLeaveBack: () => stopBombardment()
-                });
-
-                function startBombardment() {
-                    if (spawnInterval) return;
-                    spawnInterval = setInterval(() => {
-                        // 降低生成數量與頻率，避免效能卡頓
-                        for(let i=0; i<1; i++) {
-                            const particle = document.createElement('div');
-                            // 縮短字串長度
-                            const startIdx = Math.floor(Math.random() * (lagTextContent.length - 20));
-                            particle.innerText = lagTextContent.substring(startIdx, startIdx + 15);
-                            particle.className = 'absolute font-bold text-sm md:text-lg font-mono pointer-events-none whitespace-nowrap opacity-0';
-                            
-                            // 移除昂貴的 textShadow，使用單純顏色
-                            const isRed = Math.random() > 0.5;
-                            particle.style.color = isRed ? '#ff3333' : '#ffffff';
-                            particle.style.willChange = 'transform, opacity'; // 硬體加速
-                            
-                            const containerRect = dcBombardContainer.getBoundingClientRect();
-                            const sourceRect = textSource.getBoundingClientRect();
-                            const targetRect = dcLogoTarget.getBoundingClientRect();
-                            
-                            if (containerRect.width === 0) continue;
-
-                            // 從左側文字區域發射
-                            const startX = sourceRect.left + Math.random() * sourceRect.width * 0.5;
-                            const startY = sourceRect.top + Math.random() * sourceRect.height - containerRect.top;
-                            
-                            particle.style.left = startX + 'px';
-                            particle.style.top = startY + 'px';
-                            
-                            dcBombardContainer.appendChild(particle);
-
-                            // 目標：右側 Discord Logo
-                            const targetX = targetRect.left + targetRect.width / 2 - containerRect.left + (Math.random() * 20 - 10);
-                            const targetY = targetRect.top + targetRect.height / 2 - containerRect.top + (Math.random() * 20 - 10);
-
-                            gsap.to(particle, { opacity: 0.8, duration: 0.1 });
-
-                            gsap.to(particle, {
-                                x: targetX - startX,
-                                y: targetY - startY,
-                                scale: 0.8,
-                                duration: 0.4 + Math.random() * 0.2,
-                                ease: "power1.in",
-                                onComplete: () => {
-                                    particle.style.color = '#fff';
-                                    gsap.to(particle, { 
-                                        opacity: 0, 
-                                        scale: 1.5, 
-                                        duration: 0.1, 
-                                        onComplete: () => particle.remove() 
-                                    });
-                                    
-                                    // 簡化 Discord Logo 的閃爍特效，移除昂貴的 drop-shadow 過濾器
-                                    if(Math.random() > 0.7) {
-                                        gsap.to(dcLogoTarget, { 
-                                            color: '#ff3333', 
-                                            scale: 1.1,
-                                            x: (Math.random() - 0.5) * 10,
-                                            y: (Math.random() - 0.5) * 10,
-                                            duration: 0.05, 
-                                            yoyo: true, 
-                                            repeat: 1, 
-                                            onComplete: () => {
-                                                gsap.set(dcLogoTarget, { color: '#fff', scale: 1, x: 0, y: 0 });
-                                            }
-                                        });
-                                    }
-                                }
-                            });
-                        }
-                    }, 200); // 放慢生成間隔至 200ms
-                }
-
-                function stopBombardment() {
-                    clearInterval(spawnInterval);
-                    spawnInterval = null;
-                }
-            }
         });
     </script>
-<script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="e3860711a854e4771eae8cdc-|49" defer></script><script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d92e1994ffe9337',t:'MTc3Mjk4MzgyNw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"eedc53b6d939448eb8dd65181ee96091","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>
