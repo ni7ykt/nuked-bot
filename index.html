@@ -1,850 +1,1444 @@
 
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Cynuke - 信任崩壞的執行者 | The executor of the collapse of trust </title>
-  <meta property="og:title" content="Cynuke - 轟炸機械人軍火庫">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://zynuke.lol/">
-  <meta property="og:image" content="https://i.pinimg.com/1200x/13/41/45/13414519583c03a8576b45d6171c11c9.jpg">
-  <meta property="og:description" content="瞬間刪除。全域封鎖。無情洗版。當秩序崩塌，Cynuke 便是唯一的法則。">
-  <meta name="theme-color" content="#ff0d0d">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&family=JetBrains+Mono:wght@400;700&family=Noto+Sans+TC:wght@400;700;900&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-  <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
-  <script src="https://unpkg.com/split-type"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <style>
-    :root {
-      --bg-black: #000000;
-      --text-white: #eeeeee;
-      --accent-red: #ff0d0d;
-      --accent-glow: #ff002b;
-      --accent-cyan: #00f3ff;
-      --accent-purple: #bd00ff;
-      --blob-color: rgba(255, 13, 13, 0.38);
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1024">
+    <title>理性瘋狗</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-      font-size: 16px; /* 正常基準 */
-    }
-
-    body {
-      font-family: 'Inter', 'Noto Sans TC', sans-serif;
-      background: radial-gradient(circle at 10% 90%, #140000 0%, #000000 75%);
-      color: var(--text-white);
-      overflow-x: hidden;
-      margin: 0;
-      cursor: crosshair;
-      font-size: 1rem;
-      line-height: 1.6;
-    }
-
-    .font-mono { font-family: 'JetBrains Mono', monospace; }
-
-    .glitch { position: relative; display: inline-block; }
-    .glitch::before, .glitch::after {
-      content: attr(data-text);
-      position: absolute; top: 0; left: 0;
-      width: 100%; height: 100%; opacity: 0.9;
-    }
-    .glitch::before {
-      left: 5px; text-shadow: -5px 0 var(--accent-glow), -10px 0 #000;
-      animation: glitch1 1.3s infinite alternate;
-    }
-    .glitch::after {
-      left: -5px; text-shadow: 5px 0 var(--accent-red), 10px 0 #000;
-      animation: glitch2 1.7s infinite alternate-reverse;
-    }
-    @keyframes glitch1 { 0%,100% { transform: skew(0deg); } 10% { transform: skew(5deg); } 20% { transform: skew(-5deg); } }
-    @keyframes glitch2 { 0%,100% { transform: skew(0deg); } 15% { transform: skew(-4deg); } 30% { transform: skew(4deg); } }
-
-    .scanline-fast {
-      position: absolute; inset: 0;
-      background: linear-gradient(to bottom, transparent, rgba(255,13,13,0.85), transparent);
-      height: 45%; animation: scan-fast 2.3s linear infinite;
-      pointer-events: none; z-index: 1;
-    }
-    @keyframes scan-fast { 0% { transform: translateY(-220%); } 100% { transform: translateY(320%); } }
-
-    #shutter-top, #shutter-bottom { background: #000; transition: clip-path 1.5s cubic-bezier(0.77,0,0.175,1); }
-
-    .explosion-ring {
-      position: absolute; top: 50%; left: 50%;
-      width: 0; height: 0; border: 4px solid var(--accent-red);
-      border-radius: 50%; opacity: 0;
-      transform: translate(-50%, -50%);
-      box-shadow: 0 0 80px var(--accent-glow), 0 0 160px var(--accent-red);
-    }
-
-    .start-btn {
-      padding: 1.2rem 5rem;
-      border: 3px solid var(--accent-red);
-      color: white; font-size: 1.5rem; font-weight: 900;
-      letter-spacing: 0.5em; text-transform: uppercase;
-      background: transparent; transition: all 0.6s;
-      box-shadow: 0 0 70px rgba(255,13,13,0.6);
-    }
-    .start-btn:hover {
-      background: var(--accent-red); color: #000;
-      transform: scale(1.1); box-shadow: 0 0 160px var(--accent-red);
-    }
-
-    #enter-blast { position: fixed; inset: 0; background: #ff0d0d; opacity: 0; pointer-events: none; z-index: 99999; transition: opacity 1.5s ease-out; }
-
-    #viewport { opacity: 0; transition: opacity 1.8s ease; }
-
-    .noise-overlay { opacity: 0.04; }
-
-    #webgl-canvas { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
-
-    #mouse-blob {
-      position: fixed; top: 0; left: 0;
-      width: 800px; height: 800px;
-      background: radial-gradient(circle, var(--blob-color) 0%, rgba(0,0,0,0) 65%);
-      border-radius: 50%; pointer-events: none;
-      z-index: -1; opacity: 0.6;
-      transform: translate3d(-50%, -50%, 0);
-      will-change: transform; mix-blend-mode: screen;
-    }
-
-    .hud-layer { position: fixed; inset: 0; z-index: 9900; pointer-events: none; padding: 20px; box-sizing: border-box; }
-
-    .hud-coords {
-      position: absolute; bottom: 35px; right: 40px;
-      font-family: 'JetBrains Mono'; font-size: 0.875rem;
-      color: var(--accent-red); opacity: 0.8;
-      text-align: right; line-height: 1.6;
-    }
-
-    .chapter-indicator {
-      position: absolute; top: 30px; left: 30px;
-      font-family: 'JetBrains Mono'; font-size: 1rem;
-      color: var(--text-white); opacity: 0.5;
-      letter-spacing: 2px;
-    }
-
-    @media (max-width: 768px) {
-      .hud-coords { display: none; }
-    }
-
-    .text-hero { text-shadow: 0 0 70px var(--accent-glow), 0 0 140px var(--accent-red); }
-
-    .bento-card {
-      background: rgba(10, 10, 15, 0.6);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      position: relative; overflow: hidden;
-      backdrop-filter: blur(8px);
-      transition: border-color 0.3s ease, background-color 0.3s ease;
-    }
-    .bento-card:hover {
-      border-color: var(--accent-red);
-      background: rgba(20, 15, 15, 0.8);
-      box-shadow: 0 0 60px var(--accent-red);
-    }
-
-    .lag-marquee-container {
-      position: absolute; inset: 0; overflow: hidden;
-      pointer-events: none; display: flex; align-items: center; justify-content: center;
-      opacity: 1; z-index: 0;
-      mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
-    }
-    .lag-marquee-track { display: flex; white-space: nowrap; will-change: transform; }
-    .lag-text-item {
-      font-family: 'JetBrains Mono';
-      font-size: 1.125rem;
-      color: rgba(255, 50, 50, 0.8);
-      text-shadow: 0 0 8px rgba(255, 0, 0, 0.6);
-      margin-right: 4rem; font-weight: 700;
-      letter-spacing: 2px;
-    }
-
-    .warp-transit {
-      height: 40vh; display: flex; align-items: center; justify-content: center;
-      position: relative; z-index: 10; pointer-events: none;
-    }
-    .warp-message {
-      font-family: 'Orbitron'; color: rgba(255, 255, 255, 0.3);
-      font-size: 1.5rem; letter-spacing: 0.5em;
-      text-transform: uppercase; animation: pulse-slow 3s infinite;
-    }
-    @keyframes pulse-slow { 0%,100%{opacity:0.1;} 50%{opacity:0.5;} }
-
-    /* fallback 確保內容顯示 */
-    body.loaded .anim-fade,
-    body.loaded .anim-card,
-    body.loaded .split-text,
-    body.loaded .hero-sub,
-    body.loaded #boot-log,
-    body.loaded #start-content {
-      opacity: 1 !important;
-      transform: translateY(0) !important;
-    }
-  </style>
-</head>
-<body class="antialiased">
-
-  <audio id="bg-music" loop>
-    <source src="https://audio.jukehost.co.uk/TRoppfRscqjnGzjovKLTf3FCvxDDgAFL" type="audio/mpeg">
-  </audio>
-
-  <div id="start-screen">
-    <div class="scanline-fast"></div>
-    <div id="shutter-top" class="absolute inset-0 bg-black z-0 pointer-events-none" style="clip-path: polygon(0 0, 100% 0, 100% 100%);"></div>
-    <div id="shutter-bottom" class="absolute inset-0 bg-black z-0 pointer-events-none" style="clip-path: polygon(0 0, 100% 100%, 0 100%);"></div>
-    <div id="meteor-container" class="absolute inset-0 z-0 pointer-events-none overflow-hidden"></div>
-
-    <div class="relative z-10 w-full h-full flex flex-col items-center justify-center">
-      <div id="intro-animation-container" class="relative w-80 h-80 flex items-center justify-center mb-16 pointer-events-none">
-        <div id="dot-container" class="absolute w-full h-full flex items-center justify-center">
-          <div class="intro-dot absolute w-6 h-6 bg-red-600 rounded-full shadow-[0_0_40px_#ff0d0d]" id="dot1"></div>
-          <div class="intro-dot absolute w-6 h-6 bg-red-500 rounded-full shadow-[0_0_40px_#ff002b]" id="dot2"></div>
-          <div class="intro-dot absolute w-6 h-6 bg-red-700 rounded-full shadow-[0_0_40px_#cc0000]" id="dot3"></div>
-        </div>
-        <div id="core-ball" class="absolute w-12 h-12 bg-white rounded-full opacity-0 scale-0 shadow-[0_0_100px_#ffffff]"></div>
-        <div class="explosion-ring" id="explosion-ring"></div>
-        <div id="logo-container" class="absolute w-full h-full flex items-center justify-center opacity-0 scale-50 glitch" data-text="CYNUKE">
-          <svg viewBox="0 0 100 100" class="w-64 h-64 drop-shadow-[0_0_50px_rgba(255,13,13,0.9)]">
-            <polygon points="50,5 89,27.5 89,72.5 50,95 11,72.5 11,27.5" fill="none" stroke="#ff0d0d" stroke-width="4"/>
-            <path d="M35 35 L65 35 L35 65 L65 65" fill="none" stroke="#ffffff" stroke-width="10" stroke-linejoin="bevel"/>
-            <circle cx="50" cy="50" r="6" fill="#ff002b" class="animate-pulse"/>
-          </svg>
-        </div>
-      </div>
-
-      <div id="start-content" class="opacity-0 flex flex-col items-center">
-        <div class="glitch text-6xl md:text-8xl font-black tracking-[-0.12em] text-red-600 mb-8" data-text="CYNUKE">CYNUKE</div>
-        <div class="font-mono text-2xl md:text-3xl text-red-700 tracking-[0.8em] mb-12 animate-pulse">SYSTEM SECURE // VOID ACCESS 2026</div>
-        <div id="boot-log" class="font-mono text-lg md:text-xl max-w-3xl text-left h-64 overflow-hidden opacity-0 leading-relaxed">
-          [00:00] BOOT SEQUENCE INITIATED...<br>
-          [00:00.9] KERNEL → FULL LOAD<br>
-          [00:01.8] SWARM TOKENS → 50 ACTIVE<br>
-          [00:02.7] RATE LIMIT → BYPASSED<br>
-          [00:03.6] ENTROPY PAYLOAD → ARMED<br>
-          [00:04.5] NEVERFORGET ENGINE → CRITICAL<br>
-          [00:05.4] ANNIHILATION PROTOCOL → READY
-        </div>
-        <button class="start-btn">INITIALIZE FUSION</button>
-        <div class="mt-10 text-base md:text-lg text-gray-600 font-mono animate-pulse">CLICK ANYWHERE OR PRESS KEY TO ENTER VOID</div>
-      </div>
-    </div>
-  </div>
-
-  <div id="enter-blast"></div>
-  <div class="noise-overlay"></div>
-  <div class="vignette"></div>
-  <div class="scanline"></div>
-  <div id="mouse-blob"></div>
-  <div id="webgl-canvas"></div>
-
-  <div class="hud-layer">
-    <div class="chapter-indicator" id="chapter-display">PART I: THE ARSENAL</div>
-    <div class="hud-coords">
-      WARP DRIVE: <span id="warp-status">STANDBY</span><br>
-      STARS: 50,000<br>
-      SPEED: <span id="speed-indicator">1X</span>
-    </div>
-  </div>
-
-  <div id="viewport">
-    <header class="fixed top-0 left-0 right-0 z-50 mix-blend-difference px-6 py-6 md:px-12 opacity-0" id="navbar">
-      <div class="flex justify-between items-center max-w-[1800px] mx-auto">
-        <a href="#" class="text-xl md:text-2xl font-bold tracking-tighter hover:text-red-500 transition-colors">Cynuke</a>
-        <nav class="hidden md:flex gap-8 text-sm font-medium">
-          <a href="#philosophy" class="hover:text-red-500 transition-colors nav-item">毀滅宣言</a>
-          <a href="#problem" class="hover:text-cyan-400 transition-colors nav-item">現狀與解法</a>
-          <a href="#hyper-warp" class="hover:text-red-500 transition-colors nav-item">Hyper Warp</a>
-          <a href="#nuke" class="hover:text-red-500 transition-colors nav-item">歸零引擎</a>
-          <a href="#services" class="hover:text-red-500 transition-colors nav-item">服務報價</a>
-        </nav>
-        <a href="" target="_blank" class="font-medium text-sm md:text-base border border-white px-4 py-2 hover:bg-white hover:text-black transition-colors">獲取權限</a>
-      </div>
-    </header>
-
-    <main>
-      <!-- CHAPTER 1: GENESIS -->
-      <section class="relative min-h-screen flex flex-col justify-center border-b border-white/10 overflow-hidden" id="hero" data-chapter="CH.01 GENESIS">
-        <div class="absolute inset-0 z-0 opacity-10">
-          <img src="https://i.pinimg.com/1200x/13/41/45/13414519583c03a8576b45d6171c11c9.jpg" alt="Background" class="w-full h-full object-cover brightness-[0.5] parallax-bg">
-        </div>
-        <div class="relative z-10 px-6 md:px-12 max-w-[1800px] mx-auto w-full pt-20 pointer-events-none">
-          <h1 class="text-hero mb-8 text-white split-text mix-blend-difference glitch text-5xl md:text-7xl" data-text="我們是 信任崩壞的 執行者">
-            我們是<br>信任崩壞的<br>執行者。
-          </h1>
-          <p class="text-base md:text-xl max-w-3xl text-gray-300 mb-12 opacity-0 hero-sub mix-blend-difference leading-relaxed">
-            Cynuke 是一套針對社群平台信任與秩序的干擾工具。<br>
-            <span class="text-white font-bold">快速覆蓋。結構癱瘓。內容壓制。</span><br>
-            當社群失控，Cynuke 提供最有效的終止手段。
-          </p>
-        </div>
-      </section>
-
-      <div class="warp-transit"><div class="warp-message">ENTERING THE VOID</div></div>
-
-      <!-- CHAPTER 2: THE VOID -->
-      <section id="philosophy" class="min-h-screen flex items-center px-6 md:px-12 border-y border-white/10 bg-black/60 relative z-10 py-20 backdrop-blur-sm" data-chapter="CH.02 THE VOID">
-        <div class="max-w-[1800px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
-          <div class="flex items-center">
-            <h2 class="text-4xl md:text-7xl font-bold tracking-tighter mb-8 split-text leading-tight glitch" data-text="為什麼我們要 要摧毀 一切？">
-              為什麼我們要<br>要摧毀<br><span class="text-red-600">一切？</span>
-            </h2>
-          </div>
-          <div class="space-y-8 md:space-y-12">
-            <div class="anim-fade opacity-0 translate-y-4">
-              <p class="text-lg md:text-2xl leading-relaxed text-gray-300 font-light border-l-2 border-red-500 pl-6">
-                「AI 可以取代創作，但無法取代毀滅的快感。」
-              </p>
-            </div>
-            <div class="anim-fade opacity-0 translate-y-4">
-              <p class="text-lg md:text-2xl leading-relaxed text-gray-400 font-light">
-                建立一個伺服器需要數月和累積信任還有培養文化。<br>
-                但 Cynuke 讓它歸零只需要 <span class="text-red-500 font-bold">2 秒鐘</span>。
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- CHAPTER 3: PROBLEM -->
-      <section id="problem" class="min-h-screen flex flex-col justify-center px-6 md:px-12 border-y border-white/10 bg-[#020202]/80 py-20 backdrop-blur-md" data-chapter="CH.03 PROBLEM">
-        <div class="max-w-[1200px] mx-auto w-full">
-          <h2 class="text-5xl md:text-6xl text-left mb-12 split-text text-white glitch" data-text="現有的解決方案 太慢了">
-            現有的解決方案<br><span class="text-gray-600">太慢了？</span>
-          </h2>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bento-card anim-card">
-              <h3 class="text-xl font-bold text-white mb-2">API 限制</h3>
-              <p class="text-base text-gray-400">傳統機器人受限於 Discord 每秒請求數 (Rate Limits)。</p>
-            </div>
-            <div class="bento-card anim-card" style="transition-delay:0.1s">
-              <h3 class="text-xl font-bold text-white mb-2">執行瓶頸</h3>
-              <p class="text-base text-gray-400">傳統單執行緒設計無法應付高並發需求。</p>
-            </div>
-            <div class="bento-card anim-card" style="transition-delay:0.2s">
-              <h3 class="text-xl font-bold text-white mb-2">偵測風險</h3>
-              <p class="text-base text-gray-400">常見自動化腳本容易被平台安全機制封鎖。</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- CHAPTER 4: SOLUTION -->
-      <section id="solution" class="min-h-screen flex items-center justify-center px-6 md:px-12 border-y border-white/10 bg-black" data-chapter="CH.04 PROTOCOL">
-        <div class="max-w-[1200px] mx-auto w-full text-center">
-          <div class="text-cyan-400 font-mono mb-4 animate-pulse text-lg">SYSTEM OVERRIDE</div>
-          <h2 class="text-hero text-white split-text glitch text-5xl md:text-7xl" data-text="CYNUKE PROTOCOL">CYNUKE PROTOCOL</h2>
-          <p class="text-lg md:text-xl text-gray-400 mx-auto mt-8 anim-fade max-w-2xl">
-            我們採用高效非同步架構與多帳號協同，實現更快的操作與更高的成功率。
-          </p>
-        </div>
-      </section>
-
-      <div class="warp-transit"><div class="warp-message">ENGAGING HYPERWARP</div></div>
-
-      <!-- CHAPTER 5: HYPER WARP -->
-      <section id="hyper-warp" class="min-h-screen flex flex-col justify-center px-6 md:px-12 border-y border-white/10 relative bg-[#020202]/80 py-20 backdrop-blur-md" data-chapter="CH.05 HYPER WARP">
-        <div class="max-w-[1800px] mx-auto w-full relative z-10">
-          <div class="mb-12 md:mb-20 flex flex-col md:flex-row justify-between items-end">
-            <div>
-              <div class="text-xs md:text-sm font-mono text-purple-400 mb-4 anim-fade">MODULE ALPHA: SWARM</div>
-              <h2 class="text-4xl md:text-8xl font-bold tracking-tighter text-white split-text glitch" data-text="Hyper Warp 通訊癱瘓協議">
-                Hyper Warp<br>通訊癱瘓協議
-              </h2>
-            </div>
-            <div class="text-right hidden md:block">
-              <div class="text-5xl font-bold text-purple-500 count-up" data-target="50">0</div>
-              <div class="text-sm font-mono text-gray-400">SYNC BOTS ACTIVE</div>
-            </div>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bento-card p-6 md:p-8 min-h-[300px] flex flex-col justify-between anim-card" data-tilt>
-              <div class="font-mono text-sm text-gray-500">蜂群意識 (HIVE MIND)</div>
-              <div>
-                <p class="text-gray-300 text-base md:text-lg mb-4">這不只是發送訊息。10 個 Token 同時運作，瞬間淹沒任何人類的對話嘗試。</p>
-                <p class="text-gray-500 text-sm font-mono">> 2,400 MESSAGES / SEC</p>
-              </div>
-            </div>
-            <div class="bento-card p-6 md:p-8 min-h-[300px] flex flex-col justify-between col-span-1 md:col-span-2 anim-card" data-tilt style="transition-delay: 0.1s">
-              <div class="flex justify-between items-center">
-                <div class="font-mono text-sm text-gray-500">CORE KERNEL</div>
-                <div class="text-xs text-red-500 font-mono animate-pulse">LIVE EXECUTION</div>
-              </div>
-              <pre class="text-xs md:text-sm text-gray-400 font-mono overflow-x-auto whitespace-pre-wrap break-all md:whitespace-pre">
-<span class="text-purple-400">async def</span> <span class="text-cyan-400">z0</span>(tid, atkr): ts = [asyncio.create_task(w0(tk[i], i+1, tid, a1a)) <span class="text-purple-400">for</span> i <span class="text-purple-400">in</span> <span class="text-cyan-400">range</span>(<span class="text-cyan-400">len</span>(tk))] <span class="text-purple-400">await</span> asyncio.gather(*ts) <span class="text-purple-400">return</span> <span class="text-cyan-400">True</span>, f<span class="text-green-400">"Target annihilated in 0.02s."</span>
-              </pre>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- CHAPTER 6: SHIELD -->
-      <section class="min-h-screen flex items-center px-6 md:px-12 border-y border-white/10 bg-black/70 py-20 backdrop-blur-sm" data-chapter="CH.06 SHIELD">
-        <div class="max-w-[1800px] mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div class="order-2 lg:order-1">
-            <h2 class="text-4xl md:text-5xl font-bold mb-6 split-text text-white glitch" data-text="絕對霸權 防禦機制">
-              絕對霸權<br>防禦機制
-            </h2>
-            <p class="text-base md:text-lg text-gray-400 mb-8">這不只是矛，也是盾。我們保護付費者。</p>
-            <ul class="space-y-6 font-mono text-sm text-gray-300 border-l border-white/20 pl-6 anim-stagger-list">
-              <li class="flex items-center justify-between border-b border-white/10 pb-2">
-                <span>VIP PROTECTION (絕對豁免權)</span>
-                <span class="text-green-400">ACTIVE</span>
-              </li>
-              <li class="flex items-center justify-between border-b border-white/10 pb-2">
-                <span>AUTO LOCK (自動鎖定敵對用戶)</span>
-                <span class="text-green-400">ACTIVE</span>
-              </li>
-              <li class="flex items-center justify-between border-b border-white/10 pb-2">
-                <span>COUNTER ATTACK (自動反擊)</span>
-                <span class="text-red-500 animate-pulse">STANDBY</span>
-              </li>
-            </ul>
-          </div>
-          <div class="order-1 lg:order-2 flex justify-center">
-            <div class="bento-card w-full max-w-xs md:max-w-md aspect-square flex items-center justify-center relative rounded-full border-2 border-red-500/30 anim-scale" data-tilt>
-              <div class="text-center z-10">
-                <div class="text-6xl md:text-9xl font-bold mb-2 tracking-tighter text-red-500 count-up" data-target="100">0</div>
-                <div class="text-lg md:text-xl text-gray-400 font-mono tracking-widest">% CLEANSED</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <div class="warp-transit"><div class="warp-message">SYSTEM CRITICAL</div></div>
-
-      <!-- CHAPTER 7: NUKE ENGINE -->
-      <section id="nuke" class="min-h-screen flex flex-col justify-center px-6 md:px-12 border-y border-white/10 bg-red-950/10 relative py-20 backdrop-blur-md" data-chapter="CH.07 ZERO POINT">
-        <div class="max-w-[1800px] mx-auto w-full relative z-10">
-          <div class="flex flex-col md:flex-row justify-between items-end mb-12 md:mb-20">
-            <div>
-              <div class="text-xs md:text-sm font-mono text-red-500 mb-4 anim-fade">MODULE BETA: SCORCHED EARTH</div>
-              <h2 class="text-4xl md:text-8xl font-bold tracking-tighter text-white split-text glitch" data-text="NeverForget 歸零引擎">
-                NeverForget<br>歸零引擎
-              </h2>
-            </div>
-            <div class="text-right hidden md:block anim-fade">
-              <div class="text-red-500 font-bold text-xl">v2.0</div>
-              <div class="text-gray-500 font-mono">ULTRAFAST PROTOCOL</div>
-            </div>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="bento-card p-6 border-red-500/30 anim-card group min-h-[150px]" data-tilt>
-              <div class="text-red-500 text-lg font-bold mb-2">抹除 (ERASE)</div>
-              <p class="text-sm text-gray-400">非同步並行刪除所有頻道與身分組。</p>
-              <div class="absolute bottom-0 left-0 w-full h-1 bg-red-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
-            </div>
-            <div class="bento-card p-6 border-red-500/30 anim-card group min-h-[150px]" style="transition-delay: 0.1s" data-tilt>
-              <div class="text-red-500 text-lg font-bold mb-2">污染 (POLLUTE)</div>
-              <p class="text-sm text-gray-400">機械人可以在一瞬間生產出 50+ 的垃圾頻道。</p>
-              <div class="absolute bottom-0 left-0 w-full h-1 bg-red-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
-            </div>
-             <div class="bento-card p-6 border-red-500/30 anim-card group min-h-[150px]" style="transition-delay: 0.2s" data-tilt>
-            <div class="text-red-500 text-lg font-bold mb-2">清洗 (PURGE)</div>
-              <p class="text-sm text-gray-400">機械人還可以反複洗屏</p>
-              <div class="absolute bottom-0 left-0 w-full h-1 bg-red-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
-            </div>
-              <div class="bento-card p-6 border-red-500/30 anim-card group min-h-[150px]" style="transition-delay: 0.3s" data-tilt>
-                <div class="text-red-500 text-lg font-bold mb-2">標識覆蓋</div>
-              <p class="text-sm text-gray-400">強制更改伺服器或頻道名稱。</p>
-       <div class="absolute bottom-0 left-0 w-full h-1 bg-red-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- CHAPTER 8: ENTROPY -->
-      <section class="min-h-screen flex items-center justify-center px-6 md:px-12 border-y border-white/10 overflow-hidden relative bg-black/95" data-chapter="CH.08 ENTROPY">
-        <div class="lag-marquee-container">
-          <div class="lag-marquee-track" id="lag-track-1"></div>
-        </div>
-        <div class="relative z-10 text-center">
-          <h2 class="text-4xl md:text-9xl font-black mb-4 tracking-tighter text-white mix-blend-difference split-text glitch" data-text="UNICODE OVERLOAD">
-            UNICODE<br>OVERLOAD
-          </h2>
-          <p class="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto anim-fade">
-            不僅是炸群，更是對硬體的攻擊。<br>
-            <span class="text-white font-mono">lag.txt</span> 載荷包含特殊編碼，旨在凍結受害者的 Discord 客戶端。
-          </p>
-        </div>
-      </section>
-
-      <!-- CHAPTER 9: TERMINAL -->
-      <section class="min-h-screen flex items-center px-6 md:px-12 border-y border-white/10 bg-[#050505]/90 relative py-20 backdrop-blur-md" data-chapter="CH.09 TERMINAL">
-        <div class="max-w-[1200px] mx-auto w-full relative z-10">
-          <div class="mb-12 text-center">
-            <h2 class="text-4xl font-bold mb-4 split-text text-white glitch" data-text="戰術控制台">戰術控制台</h2>
-            <p class="text-base md:text-lg text-gray-400 anim-fade">直接體驗控制混亂的快感。輸入指令，發動災難。</p>
-          </div>
-          <div class="w-full bg-black border border-white/20 rounded-lg overflow-hidden shadow-2xl anim-scale" data-tilt>
-            <div class="flex items-center px-4 py-2 border-b border-white/10 bg-[#111]">
-              <div class="flex gap-2">
-                <div class="w-3 h-3 rounded-full bg-red-500 animate-pulse"></div>
-                <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-                <div class="w-3 h-3 rounded-full bg-green-500"></div>
-              </div>
-              <div class="ml-4 text-xs font-mono text-gray-500">admin@cynuke:~/weapons</div>
-            </div>
-            <div class="p-6 h-[300px] md:h-[400px] font-mono text-base overflow-y-auto relative" id="terminal-output">
-              <div class="text-gray-500 mb-2"># Initializing Weapon Systems...</div>
-              <div class="text-gray-500 mb-2"># Loading Payloads: [HyperWarp.py] [main.py] [1145.py]</div>
-              <div class="text-red-500 mb-4">⚠ 系統已解除保險 (SYSTEM ARMED).</div>
-              <div class="flex">
-                <span class="text-red-500 mr-2">➜</span>
-                <span class="text-white mr-2">~</span>
-                <span class="text-white" id="terminal-input-display"></span>
-                <span class="w-2 h-5 bg-white animate-pulse ml-1"></span>
-              </div>
-            </div>
-          </div>
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 anim-stagger-list">
-            <button onclick="runCmd('!spam_dm target')" class="border border-white/20 py-4 text-sm font-mono text-white hover:bg-red-900/30 transition-colors">!spam_dm</button>
-            <button onclick="runCmd('!nuke_cmd')" class="border border-white/20 py-4 text-sm font-mono text-white hover:bg-red-900/30 transition-colors">!nuke_cmd</button>
-            <button onclick="runCmd('/spam lag')" class="border border-white/20 py-4 text-sm font-mono text-white hover:bg-red-900/30 transition-colors">/spam lag</button>
-            <button onclick="runCmd('sys_status')" class="border border-white/20 py-4 text-sm font-mono text-white hover:bg-red-900/30 transition-colors">sys_status</button>
-          </div>
-        </div>
-      </section>
-
-      <div class="warp-transit"><div class="warp-message">ENDGAME</div></div>
-
-      <!-- CHAPTER 10: TEAM -->
-      <section id="team" class="min-h-screen flex items-center justify-center px-6 md:px-12 border-y border-white/10 relative py-20 bg-black/80 backdrop-blur-sm" data-chapter="CH.10 ARCHITECTS">
-        <div class="max-w-[1800px] mx-auto w-full">
-          <div class="mb-20 text-center">
-            <div class="text-sm font-mono text-gray-500 mb-4 anim-fade">THE ARCHITECTS</div>
-            <h2 class="text-5xl md:text-7xl font-bold tracking-tighter mb-8 split-text text-white glitch" data-text="核心團隊">核心團隊</h2>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div class="bento-card member-card p-8 flex flex-col items-center text-center anim-card" data-tilt>
-              <div class="w-32 h-32 rounded-full overflow-hidden mb-6 border-2 border-white/10 relative">
-                <img src="https://images-ext-1.discordapp.net/external/c608j5PYc2lPhiI3Ef8wj2H8ZieRe7j80pUl9fpBsIU/%3Fsize%3D1024/https/cdn.discordapp.com/avatars/1423615877030481952/8633411e33b6950e766c0b1907de42b8.png?format=webp&quality=lossless&width=320&height=320" alt="Light" class="member-avatar w-full h-full object-cover">
-              </div>
-              <h3 class="text-2xl font-bold mb-2 text-white">貓貓</h3>
-              <p class="text-sm text-gray-400 font-mono italic">「好兄弟 雖然之前吵架過。」</p>
-            </div>
-            <div class="bento-card member-card p-8 flex flex-col items-center text-center anim-card" style="transition-delay: 0.1s" data-tilt>
-              <div class="w-32 h-32 rounded-full overflow-hidden mb-6 border-2 border-white/10 relative">
-                <img src="https://images-ext-1.discordapp.net/external/9fFWR6I5TYeZhw4ZRSyDr8_c6f1qe3nhiROitV9m-Zs/%3Fsize%3D1024/https/cdn.discordapp.com/avatars/1431114017467924641/9b8a88485c3e28ba76a16e144bb225c2.png?format=webp&quality=lossless&width=625&height=625" onerror="this.src='https://ui-avatars.com/api/?name=FALED&background=random&color=fff'" alt="FALED" class="member-avatar w-full h-full object-cover">
-              </div>
-              <h3 class="text-2xl font-bold mb-2 text-white">𝓒𝓸𝓷𝓚𝓪𝓧𝓩心碎的白神</h3>
-              <p class="text-sm text-gray-400 font-mono italic">幫忙寫機械人代碼的。</p>
-            </div>
-            <div class="bento-card member-card p-8 flex flex-col items-center text-center anim-card" style="transition-delay: 0.2s" data-tilt>
-              <div class="w-32 h-32 rounded-full overflow-hidden mb-6 border-2 border-white/10 relative">
-                <img src="https://images-ext-1.discordapp.net/external/-_aj3wjkoLtVSc9-XW_tyAN99zvrcnqK0-QNotznIW4/%3Fsize%3D1024/https/cdn.discordapp.com/avatars/1474086484590985389/6486035a0b46ddf43bfdbe8d3c7fc1fb.png?format=webp&quality=lossless&width=559&height=559" alt="神秘人" class="member-avatar w-full h-full object-cover">
-              </div>
-              <h3 class="text-2xl font-bold mb-2 text-white">神秘人</h3>
-              <p class="text-sm text-gray-400 font-mono italic">喜歡寫機械人代碼的神秘人</p>
-            </div>
-            <div class="bento-card member-card p-8 flex flex-col items-center text-center anim-card" style="transition-delay: 0.3s" data-tilt>
-              <div class="w-32 h-32 rounded-full overflow-hidden mb-6 border-2 border-white/10 relative">
-                <img src="https://cdn.discordapp.com/avatars/1108004585349599273/ab87ad49effe6e4931d24f74fb023b2a.webp?size=1024" alt="IE" class="member-avatar w-full h-full object-cover">
-              </div>
-              <h3 class="text-2xl font-bold mb-2 text-white">IE</h3>
-              <p class="text-sm text-gray-400 font-mono italic">Light是gay</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <div class="warp-transit"><div class="warp-message">ENDGAME</div></div>
-
-      <!-- CHAPTER 11: SERVICES -->
-      <section id="services" class="min-h-screen flex items-center justify-center px-6 md:px-12 border-y border-white/10 relative bg-[#050505]/80 py-20 backdrop-blur-md" data-chapter="CH.11 CONTRACTS">
-        <div class="max-w-[1800px] mx-auto w-full">
-          <div class="mb-20 text-center">
-            <div class="text-sm font-mono text-gray-500 mb-4 anim-fade">MERCENARY CONTRACTS</div>
-            <h2 class="text-5xl md:text-7xl font-bold tracking-tighter mb-8 split-text text-white glitch" data-text="服務項目與報價">服務項目與報價</h2>
-            <p class="text-base md:text-lg text-gray-400 max-w-2xl mx-auto anim-fade">
-              提供專業客製化開發與自架託管服務。所有交易均透過 Ticket 私訊進行。
-            </p>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div class="bento-card p-8 border-l-4 border-l-purple-500 anim-card min-h-[300px] flex flex-col" data-tilt>
-              <div class="flex justify-between items-start mb-6">
-                <h3 class="text-2xl font-bold text-white">個人網站介紹頁面</h3>
-                <span class="bg-purple-900/50 text-purple-300 text-xs font-mono px-2 py-1 rounded">WEB DEV</span>
-              </div>
-              <p class="text-gray-400 text-sm mb-6 flex-1">完全客製化設計、RWD 響應式版面、品牌形象統一。</p>
-              <div class="mt-auto">
-                <div class="text-3xl font-bold text-white mb-1">HKD 120 <span class="text-sm font-normal text-gray-500">起</span></div>
-                <div class="text-xs text-gray-600 font-mono">依內容複雜度報價 台灣的私訊說價格</div>
-              </div>
-            </div>
-            <div class="bento-card p-8 border-l-4 border-l-purple-500 anim-card min-h-[300px] flex flex-col" style="transition-delay: 0.1s" data-tilt>
-              <div class="flex justify-between items-start mb-6">
-                <h3 class="text-2xl font-bold text-white">客製機器人</h3>
-                <span class="bg-purple-900/50 text-purple-300 text-xs font-mono px-2 py-1 rounded">BOT DEV</span>
-              </div>
-              <p class="text-gray-400 text-sm mb-6 flex-1">24/7 不下線自架託管。指令、等級、票務皆可客製。</p>
-              <div class="mt-auto">
-                <div class="text-3xl font-bold text-white mb-1">HKD 70 <span class="text-sm font-normal text-gray-500">Steam Card 起</span></div>
-                <div class="text-xs text-gray-600 font-mono">依功能複雜度報價</div>
-              </div>
-            </div>
-            <div class="bento-card p-8 border-l-4 border-l-red-500 lg:col-span-1 anim-card min-h-[300px] flex flex-col" style="transition-delay: 0.2s" data-tilt>
-              <div class="flex justify-between items-start mb-6">
-                <h3 class="text-2xl font-bold text-white">自定義機械人</h3>
-                <span class="bg-red-900/50 text-red-300 text-xs font-mono px-2 py-1 rounded">TARGETED</span>
-              </div>
-              <p class="text-gray-400 text-sm mb-6 flex-1">
-                價格到位，我們什麽都敢做。<br>
-                <span class="text-red-400 italic">「有些人只能看著自己辛辛苦苦做的群被炸，也無能爲力。」</span>
-              </p>
-              <div class="mt-auto">
-                <div class="text-3xl font-bold text-red-500 mb-1">私訊報價</div>
-                <div class="text-xs text-gray-600 font-mono">100% 匿名保障</div>
-              </div>
-            </div>
-            <div class="bento-card p-8 border-l-4 border-l-red-500 lg:col-span-3 anim-card min-h-[200px] flex flex-col items-center justify-center text-center" style="transition-delay: 0.4s" data-tilt>
-              <h3 class="text-3xl font-bold text-white mb-4">帳號盜用與教學</h3>
-              <p class="text-gray-400 text-sm mb-6">提供專業帳號盜用服務 (BLACK OPS)。</p>
-              <a href="https://discord.gg/webTSnRDBq" target="_blank" class="px-8 py-3 bg-red-600 text-white font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-colors">Open Ticket</a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- CTA Footer -->
-<section class="min-h-screen flex items-center justify-center px-6 md:px-12 bg-black relative overflow-hidden py-32">
-  <div class="text-center relative z-10">
-    <h2 class="text-hero mb-12 split-text text-white glitch text-7xl sm:text-9xl md:text-[10rem] lg:text-[12rem] leading-none" data-text="加入Discord join the Legion">
-      加入Discord Join the Legion
-    </h2>
-    <div class="flex flex-col md:flex-row gap-8 justify-center items-center mt-16 anim-fade">
-      <a href="https://discord.gg/webTSnRDBq" target="_blank" class="px-16 py-6 bg-white text-black text-2xl md:text-3xl font-bold tracking-wider hover:bg-red-600 hover:text-white transition-colors w-full md:w-auto rounded">
-        加入 Discord
-      </a>
-    </div>
-    <p class="mt-20 text-xl md:text-2xl text-gray-500 font-mono anim-fade">
-      © 2025 Cynuke. All systems armed.<br>Powered by Hyper Warp Protocol & NeverForget Engine.
-    </p>
-  </div>
-</section>
-    </main>
-  </div>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const startScreen = document.getElementById('start-screen');
-      const viewport = document.getElementById('viewport');
-      const navbar = document.getElementById('navbar');
-      const bgm = document.getElementById('bg-music');
-      const log = document.getElementById('boot-log');
-      const blast = document.getElementById('enter-blast');
-
-      bgm.volume = 0.28;
-      let isReady = false;
-
-      const introTl = gsap.timeline({ onComplete: () => isReady = true });
-      introTl
-        .to('#dot1', { x: 0, y: -70, duration: 1.4 }, 0)
-        .to('#dot2', { x: -60, y: 45, duration: 1.4 }, 0.2)
-        .to('#dot3', { x: 60, y: 45, duration: 1.4 }, 0.4)
-        .to('#dot-container', { rotation: 1440, duration: 2.2, ease: "power2.inOut" }, "-=1")
-        .to('.intro-dot', { scale: 0, duration: 0.6, ease: "back.in" }, "-=0.8")
-        .to('#core-ball', { scale: 2, opacity: 1, duration: 0.5 }, "-=0.5")
-        .to('#core-ball', { scale: 0, opacity: 0, duration: 0.4 }, "-=0.1")
-        .fromTo('#explosion-ring', { scale: 0, opacity: 1 }, { scale: 25, opacity: 0, duration: 1.2 }, "-=0.3")
-        .fromTo('#logo-container', { scale: 0.2, opacity: 0, rotation: -180 }, { scale: 1, opacity: 1, rotation: 0, duration: 1.6, ease: "elastic.out(1.2,0.3)" }, "-=1")
-        .to('#start-content', { opacity: 1, y: -40, duration: 1.4 }, "-=1.2");
-
-      const meteorContainer = document.getElementById('meteor-container');
-      for(let i = 0; i < 60; i++) {
-        let m = document.createElement('div');
-        m.style.position = 'absolute';
-        m.style.width = (80 + Math.random()*250) + 'px';
-        m.style.height = (2 + Math.random()*3) + 'px';
-        m.style.background = 'linear-gradient(to right, transparent, #ff0d0d, #ff002b)';
-        m.style.transform = 'rotate(45deg)';
-        m.style.boxShadow = '0 0 20px #ff0d0d';
-        meteorContainer.appendChild(m);
-      }
-
-      setTimeout(() => {
-        log.style.opacity = '1';
-        const lines = log.innerHTML.split('<br>');
-        log.innerHTML = '';
-        let delay = 0;
-        lines.forEach(line => {
-          const span = document.createElement('div');
-          span.innerHTML = line + '<br>';
-          span.style.opacity = '0';
-          log.appendChild(span);
-          gsap.to(span, { opacity: 1, duration: 0.5, delay: delay });
-          delay += 0.7;
-        });
-      }, 2200);
-
-      const initSite = () => {
-        if (!isReady) return;
-        bgm.play().catch(() => {});
-        gsap.to(blast, { opacity: 1, duration: 0.6, ease: "power2.in", onComplete: () => {
-          gsap.to(blast, { opacity: 0, duration: 1.2, delay: 0.4, ease: "power3.out" });
-        }});
-        gsap.to('#shutter-top', { clipPath: "polygon(0 0, 100% 0, 100% 0, 0 0)", duration: 1.6, ease: "power4.inOut", delay: 0.3 });
-        gsap.to('#shutter-bottom', { clipPath: "polygon(0 100%, 100% 100%, 100% 100%, 0 100%)", duration: 1.6, ease: "power4.inOut", delay: 0.3 });
-        gsap.to(startScreen, { opacity: 0, duration: 2, delay: 1, onComplete: () => {
-          startScreen.style.display = 'none';
-          viewport.style.opacity = '1';
-          navbar.style.opacity = '1';
-          window.isOverload = true;
-          setTimeout(() => window.isOverload = false, 3000);
-        }});
-      };
-
-      startScreen.addEventListener('click', initSite);
-
-      // 強制顯示 fallback
-      setTimeout(() => {
-        document.body.classList.add('loaded');
-        viewport.style.opacity = '1';
-        navbar.style.opacity = '1';
-      }, 4500);
-
-      gsap.registerPlugin(ScrollTrigger);
-      const lenis = new Lenis({ duration: 1.5 });
-      function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
-      requestAnimationFrame(raf);
-
-      const scene = new THREE.Scene();
-      scene.fog = new THREE.FogExp2(0x050505, 0.0003);
-      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 5000);
-      camera.position.z = 1000;
-      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false });
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      document.getElementById('webgl-canvas').appendChild(renderer.domElement);
-
-      const particleCount = 50000;
-      const posArray = new Float32Array(particleCount * 3);
-      const colorArray = new Float32Array(particleCount * 3);
-      const colors = [
-        new THREE.Color(0xff0d0d),
-        new THREE.Color(0xff002b),
-        new THREE.Color(0xcc0000),
-        new THREE.Color(0xffffff),
-        new THREE.Color(0x8a0000)
-      ];
-      for(let i = 0; i < particleCount; i++) {
-        const radius = 6000 * Math.sqrt(Math.random());
-        const theta = Math.random() * 2 * Math.PI;
-        posArray[i * 3] = radius * Math.cos(theta);
-        posArray[i * 3 + 1] = radius * Math.sin(theta);
-        posArray[i * 3 + 2] = (Math.random() - 0.5) * 10000;
-        const color = colors[Math.floor(Math.random() * colors.length)];
-        colorArray[i * 3] = color.r;
-        colorArray[i * 3 + 1] = color.g;
-        colorArray[i * 3 + 2] = color.b;
-      }
-      const geometry = new THREE.BufferGeometry();
-      geometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-      geometry.setAttribute('color', new THREE.BufferAttribute(colorArray, 3));
-      const material = new THREE.PointsMaterial({ size: 2, vertexColors: true, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending });
-      const starsMesh = new THREE.Points(geometry, material);
-      scene.add(starsMesh);
-
-      let scrollSpeed = 0;
-      lenis.on('scroll', e => scrollSpeed += Math.abs(e.velocity) * 0.5);
-      const animate = () => {
-        let speed = 2;
-        if (window.isOverload) speed *= 10;
-        const positions = starsMesh.geometry.attributes.position.array;
-        for(let i = 2; i < particleCount * 3; i += 3) {
-          positions[i] += speed;
-          if (positions[i] > 1000) {
-            positions[i] = -8000;
-            const radius = 6000 * Math.sqrt(Math.random());
-            const theta = Math.random() * 2 * Math.PI;
-            positions[i-2] = radius * Math.cos(theta);
-            positions[i-1] = radius * Math.sin(theta);
-          }
+    <style>
+        /* --- 全局設置 --- */
+        :root {
+            --bg-color: #050505;
+            --card-bg: rgba(10, 10, 10, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.06);
+            --discord-color: #5865F2;
+            --tooltip-bg: rgba(0, 0, 0, 0.95);
         }
-        starsMesh.geometry.attributes.position.needsUpdate = true;
-        starsMesh.rotation.z += 0.0002 + (scrollSpeed * 0.0001);
-        scrollSpeed *= 0.95;
-        renderer.render(scene, camera);
-        requestAnimationFrame(animate);
-      };
-      animate();
 
-      let mouseX = 0, mouseY = 0;
-      document.addEventListener('mousemove', e => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-      });
-      const blob = document.getElementById('mouse-blob');
-      let bx = 0, by = 0;
-      function blobLoop() {
-        bx += (mouseX - bx) * 0.1;
-        by += (mouseY - by) * 0.1;
-        if (blob) blob.style.transform = `translate3d(${bx}px, ${by}px, 0) translate(-50%, -50%)`;
-        requestAnimationFrame(blobLoop);
-      }
-      blobLoop();
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            user-select: none;
+            cursor: url('../api/cursor.png') 62 62, auto;
+        }
 
-      const lagTextContent = " @everyone 틓탑컏쳍쫋죉웇쓅싃상뺿벽못뢹뚷뒵늳낱꺯겭ꪫꢩꚧ꒥ꊣꂡ麟鲝骛颙隗钕銓邑躏貍誋袉蚇蒅芃肁繿籽穻硹癷瑵牳灱湯汭橫桩晧摥扣恡幟屝婛塙噗呕剓偑乏䱍䩋䡉䙇䑅䉃䁁㸿㰽㨻㠹㘷㐵㈳〱ⸯⰭ⨫⠩☧␥∣‡ḟᰝᨛ᠙ᘗᐕሓထฏ఍਋ࠉ؇Ѕȃ";
-      const lagContainer = document.getElementById('lag-track-1');
-      if (lagContainer) {
-        const item1 = document.createElement('div');
-        item1.className = 'lag-text-item';
-        item1.innerText = lagTextContent.repeat(10);
-        const item2 = document.createElement('div');
-        item2.className = 'lag-text-item';
-        item2.innerText = lagTextContent.repeat(10);
-        lagContainer.appendChild(item1);
-        lagContainer.appendChild(item2);
-        gsap.to(lagContainer, { xPercent: -50, ease: "none", duration: 30, repeat: -1 });
-      }
+        /* --- 背景特效 --- */
+        #bg-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -3;
+            filter: brightness(1.2) contrast(1.1);
+            /* 調亮背景 */
+            transition: filter 1s ease;
+        }
 
-      gsap.utils.toArray('.anim-fade').forEach(el => {
-        gsap.from(el, { scrollTrigger: { trigger: el, start: 'top 85%' }, y: 20, opacity: 0, duration: 0.8, ease: 'power2.out' });
-      });
-      const cards = document.querySelectorAll('.anim-card');
-      cards.forEach((el, i) => {
-        gsap.from(el, { scrollTrigger: { trigger: el, start: 'top 90%' }, y: 30, opacity: 0, duration: 0.6, delay: 0.1, ease: 'back.out(1.5)' });
-      });
-      if (window.innerWidth > 768) {
-        const splitTypes = document.querySelectorAll('.split-text');
-        splitTypes.forEach((char) => {
-          const text = new SplitType(char, { types: 'chars' });
-          gsap.from(text.chars, { scrollTrigger: { trigger: char, start: 'top 85%' }, y: 50, opacity: 0, stagger: 0.02, duration: 0.8, ease: 'power2.out' });
+
+
+        /* --- 音樂播放器 (iPod 風格) --- */
+        #music-widget {
+            position: fixed;
+            bottom: 50px;
+            right: 50px;
+            width: 300px;
+            background: rgba(15, 15, 15, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            padding: 30px;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            transform: translateZ(50px);
+            /* 讓它也有點 3D 感 */
+            transition: transform 0.3s ease;
+            visibility: hidden;
+            /* 初始隱藏，進入後顯示 */
+            opacity: 0;
+            transition: opacity 1s ease 0.8s, visibility 1s;
+        }
+
+        #music-widget:hover {
+            transform: scale(1.02);
+        }
+
+        .vinyl-wrapper {
+            position: relative;
+            width: 220px;
+            height: 220px;
+            margin-bottom: 25px;
+            cursor: grab;
+            /* 增加抓取手勢 */
+        }
+
+        .vinyl-wrapper:active {
+            cursor: grabbing;
+        }
+
+        .vinyl-record {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background:
+                radial-gradient(circle, #111 25%, transparent 26%),
+                repeating-radial-gradient(#111 0, #111 2px, #222 3px, #111 4px);
+            position: relative;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.6);
+            /* 移除 CSS 動畫，改用 JS 控制 */
+            /* animation: spin 4s linear infinite; */
+            /* animation-play-state: paused; */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* 確保旋轉中心正確 */
+            transform-origin: center center;
+        }
+
+        .vinyl-record::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%, rgba(255, 255, 255, 0.05) 100%);
+            pointer-events: none;
+        }
+
+        .vinyl-label {
+            width: 35%;
+            height: 35%;
+            border-radius: 50%;
+            background-image: url('https://i.pinimg.com/736x/ee/18/3d/ee183db3159b3d686f3cd9329f2ee8a3.jpg');
+            background-size: cover;
+            background-position: center;
+            border: 4px solid #1a1a1a;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* 播放器控制項 */
+        .player-controls {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .control-buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 5px;
+        }
+
+        .ctrl-btn {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .ctrl-btn:hover {
+            color: #fff;
+            transform: scale(1.1);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .play-btn {
+            font-size: 1.8rem;
+            color: #fff;
+        }
+
+        .song-info {
+            text-align: center;
+            font-size: 0.9rem;
+            color: white;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .spotify-embed {
+            margin-top: 15px;
+            width: 100%;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Volume */
+        .volume-control {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.85rem;
+            width: 100%;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            /* 填滿容器 */
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            background: #fff;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.2s;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.3);
+        }
+
+        #scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at center, transparent 0%, rgba(0, 0, 0, 0.8) 100%),
+                /* Vignette */
+                linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.2) 50%, rgba(0, 0, 0, 0.2));
+            background-size: 100% 100%, 100% 4px;
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        #canvas-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* --- 點擊進入 --- */
+        #enter-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: opacity 0.8s ease, visibility 0.8s;
+        }
+
+        .enter-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            animation: textGlow 2s infinite ease-in-out;
+        }
+
+        @keyframes textGlow {
+
+            0%,
+            100% {
+                text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+                opacity: 0.8;
+            }
+
+            50% {
+                text-shadow: 0 0 25px rgba(255, 255, 255, 0.9);
+                opacity: 1;
+            }
+        }
+
+        /* --- 3D 卡片容器 --- */
+        #card-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            perspective: 1200px;
+            z-index: 10;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 1s ease 0.5s, visibility 1s;
+        }
+
+        #profile-card {
+            width: 520px;
+            /* 更大的主卡片 */
+            background: var(--card-bg);
+            backdrop-filter: blur(20px) saturate(160%);
+            -webkit-backdrop-filter: blur(20px) saturate(160%);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            padding: 45px 30px;
+            text-align: center;
+            /* Pulsing Shadow */
+            box-shadow: 0 0 80px rgba(0, 0, 0, 0.9), inset 0 0 20px rgba(255, 255, 255, 0.05);
+            animation: cardPulse 4s ease-in-out infinite;
+            transform-style: preserve-3d;
+            overflow: visible;
+        }
+
+        @keyframes cardPulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 80px rgba(0, 0, 0, 0.9), 0 0 20px rgba(88, 101, 242, 0.1);
+            }
+
+            50% {
+                box-shadow: 0 0 100px rgba(0, 0, 0, 1), 0 0 40px rgba(88, 101, 242, 0.2);
+                border-color: rgba(88, 101, 242, 0.3);
+            }
+        }
+
+        /* --- 內容元素 --- */
+        .avatar-container {
+            position: relative;
+            width: 115px;
+            height: 115px;
+            margin: 0 auto 15px;
+            transform: translateZ(40px);
+        }
+
+        .avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
+            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .avatar:hover {
+            transform: scale(1.05) rotate(5deg);
+        }
+
+        .username {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 2px;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+            transform: translateZ(30px);
+            letter-spacing: 1px;
+
+            /* Glitch Effect */
+            position: relative;
+            display: inline-block;
+        }
+
+        /* Glitch Animation */
+        .username::before,
+        .username::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.8;
+        }
+
+        .username::before {
+            color: #0ff;
+            z-index: -1;
+            clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+            animation: glitch-anim-1 2.5s infinite linear alternate-reverse;
+        }
+
+        .username::after {
+            color: #f0f;
+            z-index: -2;
+            clip-path: polygon(0 15%, 100% 20%, 100% 100%, 0 100%);
+            animation: glitch-anim-2 3s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch-anim-1 {
+            0% {
+                transform: translate(0);
+            }
+
+            20% {
+                transform: translate(-2px, 2px);
+            }
+
+            40% {
+                transform: translate(-2px, -2px);
+            }
+
+            60% {
+                transform: translate(2px, 2px);
+            }
+
+            80% {
+                transform: translate(2px, -2px);
+            }
+
+            100% {
+                transform: translate(0);
+            }
+        }
+
+        @keyframes glitch-anim-2 {
+            0% {
+                transform: translate(0);
+            }
+
+            20% {
+                transform: translate(2px, -2px);
+            }
+
+            40% {
+                transform: translate(2px, 2px);
+            }
+
+            60% {
+                transform: translate(-2px, 2px);
+            }
+
+            80% {
+                transform: translate(-2px, -2px);
+            }
+
+            100% {
+                transform: translate(0);
+            }
+        }
+
+        .uid {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.4);
+            font-family: 'Courier New', monospace;
+            margin-bottom: 12px;
+            transform: translateZ(25px);
+        }
+
+        /* --- Rich Profile Card --- */
+        .profile-status-card {
+            display: flex;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.35);
+            /* 半透明，與主卡片一致 */
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 18px;
+            padding: 14px 16px;
+            width: 90%;
+            /* 相對於父容器 */
+            max-width: 480px;
+            margin: 15px auto;
+            transform: translateZ(40px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-status-card:hover {
+            transform: translateZ(55px) scale(1.02);
+            background: rgba(0, 0, 0, 0.5);
+            box-shadow: 0 18px 55px rgba(0, 0, 0, 0.5);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Avatar Section */
+        .card-avatar-wrapper {
+            position: relative;
+            width: 70px;
+            /* 更大 */
+            height: 70px;
+            flex-shrink: 0;
+            margin-right: 18px;
+        }
+
+        .card-avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .card-status-dot {
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 4px solid #282b30;
+            /* Match card bg */
+            background-color: #747f8d;
+        }
+
+        /* Status Colors */
+        .status-online {
+            background-color: #43b581;
+        }
+
+        .status-idle {
+            background-color: #faa61a;
+        }
+
+        .status-dnd {
+            background-color: #f04747;
+        }
+
+        .status-offline {
+            background-color: #747f8d;
+        }
+
+        /* Content Section */
+        .card-content {
+            flex-grow: 1;
+            text-align: left;
+            min-width: 0;
+            /* truncate text fix */
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 2px;
+        }
+
+        .card-username {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .card-badges {
+            display: flex;
+            gap: 4px;
+        }
+
+        .mini-badge {
+            width: 16px;
+            height: 16px;
+            filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.3));
+        }
+
+        .card-activity-header {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 2px;
+        }
+
+        .card-activity-details {
+            font-size: 0.8rem;
+            color: #b9bbbe;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .card-activity-state {
+            font-size: 0.8rem;
+            color: #b9bbbe;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Activity Asset (Large Image) */
+        .card-asset-wrapper {
+            position: relative;
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            margin-left: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            flex-shrink: 0;
+            display: none;
+            /* Hidden by default */
+        }
+
+        .card-large-image {
+            width: 100%;
+            height: 100%;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .card-small-image-wrapper {
+            position: absolute;
+            bottom: -4px;
+            right: -4px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #282b30;
+            padding: 2px;
+        }
+
+        .card-small-image {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* Removed old styles to clean up */
+        /* --- Guns.lol 風格徽章 (Badges) --- */
+        .badges-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin: 15px 0 20px 0;
+            transform: translateZ(35px);
+            padding: 0 10px;
+        }
+
+        .badge {
+            position: relative;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: help;
+            transition: transform 0.2s;
+        }
+
+        .badge img,
+        .badge svg {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.3));
+        }
+
+        .badge:hover {
+            transform: scale(1.15);
+        }
+
+        /* Tooltip */
+        .badge::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%) translateY(5px);
+            background: var(--tooltip-bg);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+            pointer-events: none;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            z-index: 100;
+        }
+
+        .badge:hover::after {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* --- Bio --- */
+        .bio-box {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 10px;
+            margin: 15px 0 25px 0;
+            min-height: 24px;
+            font-size: 0.9rem;
+            color: #e0e0e0;
+            font-family: 'Courier New', monospace;
+            transform: translateZ(30px);
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        }
+
+        /* --- Discord Widget (顯示總人數) --- */
+        .discord-widget {
+            background: rgba(30, 30, 30, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            text-decoration: none;
+            transform: translateZ(35px);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .discord-widget:hover {
+            background: rgba(88, 101, 242, 0.15);
+            border-color: rgba(88, 101, 242, 0.5);
+            transform: translateZ(45px) scale(1.02);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .discord-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            margin-right: 15px;
+            overflow: hidden;
+            background: #2b2d31;
+            flex-shrink: 0;
+        }
+
+        .discord-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .discord-info {
+            text-align: left;
+            flex-grow: 1;
+        }
+
+        .discord-name {
+            display: block;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: white;
+            margin-bottom: 3px;
+        }
+
+        .discord-status {
+            font-size: 0.7rem;
+            color: #aaa;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            /* Online 與 Total 的間距 */
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background-color: #23a559;
+            border-radius: 50%;
+            margin-right: 5px;
+            box-shadow: 0 0 6px #23a559;
+        }
+
+        .status-dot.gray {
+            background-color: #747f8d;
+            box-shadow: none;
+        }
+
+        .join-btn {
+            background: var(--discord-color);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 7px 16px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        /* --- Social Grid --- */
+        .social-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px;
+            transform: translateZ(35px);
+            margin-bottom: 25px;
+        }
+
+        .social-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 1.3rem;
+            transition: all 0.3s;
+        }
+
+        .social-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-5px);
+            color: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Social Hover Colors */
+        .social-btn:hover .fa-youtube {
+            color: #ff0000;
+        }
+
+        .social-btn:hover .fa-github {
+            color: #fff;
+        }
+
+        .social-btn:hover .fa-steam {
+            color: #66c0f4;
+        }
+
+        .social-btn:hover .fa-tiktok {
+            color: #ff0050;
+            text-shadow: 2px 2px 0px #00f2ea;
+        }
+
+        .social-btn:hover .fa-spotify {
+            color: #1DB954;
+        }
+
+        /* 針對 SVG 圖示的懸停效果 */
+        .social-btn:hover svg {
+            fill: #fff;
+        }
+
+
+
+
+
+        .footer {
+            margin-top: 30px;
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.2);
+            transform: translateZ(10px);
+        }
+
+        /* --- Mouse Trail --- */
+        .cursor-trail {
+            position: fixed;
+            width: 16px;
+            height: 24px;
+            /* Standard Cursor SVG */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='24' viewBox='0 0 16 24'%3E%3Cpath fill='%23FFFFFF' stroke='%23000000' stroke-width='1.5' d='M1,1 l0,18 l4,-5 l3,7 l3,-1 l-3,-7 l6,0 L1,1 Z'/%3E%3C/svg%3E");
+            background-size: contain;
+            background-repeat: no-repeat;
+            pointer-events: none;
+            z-index: 99999;
+            opacity: 1;
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+        }
+    </style>
+</head>
+
+<body>
+
+    <video id="bg-video" loop muted playsinline>
+        <source src="https://www.pexels.com/download/video/856668/" type="video/mp4">
+    </video>
+
+    <div id="scanlines"></div>
+    <canvas id="canvas-overlay"></canvas>
+
+    <audio id="bg-music" loop>
+        <source src="../api/dog-in-a-cage-official-music-video.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="enter-overlay">
+        <div class="enter-text">❤</div>
+    </div>
+
+    <div id="card-container">
+        <div id="profile-card">
+
+            <div class="magic-glow"></div> 
+
+
+           
+            <div class="avatar-container">
+                <img src="https://cdn.discordapp.com/avatars/1431892178438848655/archived/1492379950370787460/743bc00a232788984ab453ddb6bcc9fd.png?size=1280"
+                    alt="幹你娘沒檔案" class="avatar">
+            </div>
+
+
+            <div class="username" data-text="理性瘋狗">理性瘋狗</div>
+
+
+            <!-- Rich Profile Card -->
+            <div class="profile-status-card">
+                <!-- Avatar & Status -->
+                <div class="card-avatar-wrapper">
+                    <img src="https://i.pinimg.com/736x/1a/40/b4/1a40b4fc0ef563409ecedbbb85c051bc.jpg"
+                        class="card-avatar" id="card-main-avatar">
+                    <div class="card-status-dot status-offline" id="card-status-dot"></div>
+                </div>
+
+                <!-- Info -->
+                <div class="card-content">
+                    <div class="card-header">
+                        <div class="card-username" id="card-username">瘋狗之地</div>
+                        <div class="card-badges">
+                            <!-- Fake Badges (Static for design) -->
+                            <img src="https://cdn.discordapp.com/emojis/1399038179192864768.webp?size=128"
+                                class="mini-badge">
+                        </div>
+                    </div>
+
+                    <div class="card-activity-header" id="card-act-name">Loading...</div>
+                    <div class="card-activity-details" id="card-act-details">Waiting for bot...</div>
+                    <div class="card-activity-state" id="card-act-state"></div>
+                </div>
+
+                <!-- Large Asset -->
+                <div class="card-asset-wrapper" id="card-asset-box">
+                    <img src="" class="card-large-image" id="card-large-img">
+                    <div class="card-small-image-wrapper" id="card-small-img-box" style="display:none">
+                        <img src="" class="card-small-image" id="card-small-img">
+                    </div>
+                </div>
+            </div>
+
+
+
+
+            <div class="bio-box">
+                <span id="typewriter"></span><span class="cursor">|</span>
+            </div>
+
+            <a href="https://discord.gg/rcfgxeSjJD" target="_blank" class="discord-widget">
+                <div class="discord-icon">
+                    <img src="data:image/jpeg;base64,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"
+                        alt="Icon">
+                </div>
+                <div class="discord-info">
+                    <span class="discord-name">Join ZY Group</span>
+                    <div class="discord-status">
+                        <div class="status-item">
+                            <span class="status-dot"></span>
+                            <span id="online-count">Fetching...</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-dot gray" style="margin-left: 8px;"></span>
+                            <span id="total-count">...</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="join-btn">Join</div>
+            </a>
+
+            <div class="social-grid">
+                <a href="https://youtube.com/@Y4n9x1" target="_blank" class="social-btn" title="YouTube"><i
+                        class="fab fa-youtube"></i></a>
+                <a href="https://github.com/Yyyyy222222" target="_blank" class="social-btn" title="GitHub"><i
+                        class="fab fa-github"></i></a>
+                <a href="https://steamcommunity.com/id/IFromTaiwan/" target="_blank" class="social-btn" title="Steam"><i
+                        class="fab fa-steam"></i></a>
+
+                <a href="https://www.roblox.com/users/1948875534/profile" target="_blank" class="social-btn"
+                    title="Roblox">
+                    <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd"
+                        style="width: 24px; height: 24px; fill: currentColor;">
+                        <path
+                            d="M5.334 0 L0 18.905 L18.683 24 L24 5.095 L5.334 0 Z M10 8.5 L15.5 10 L14 15.5 L8.5 14 L10 8.5 Z" />
+                    </svg>
+                </a>
+
+                <a href="https://www.tiktok.com/@sqkit4" target="_blank" class="social-btn" title="TikTok"><i
+                        class="fab fa-tiktok"></i></a>
+                <a href="https://open.spotify.com/user/31d4v5r3ghfqgzqr3ghaylrpvrey" target="_blank" class="social-btn"
+                    title="Spotify"><i class="fab fa-spotify"></i></a>
+            </div>
+
+            <!-- 音量控制移除，移至 Widget -->
+
+
+        </div>
+    </div>
+
+    <!-- 新增：獨立音樂播放器 Widget -->
+    <div id="music-widget">
+        <div class="vinyl-wrapper" id="record-player">
+            <div class="vinyl-record">
+                <div class="vinyl-label"></div>
+            </div>
+        </div>
+
+        <div class="player-controls">
+            <div class="song-info">lolezezlol</div>
+
+            <div class="control-buttons">
+                <button class="ctrl-btn" id="prev-btn"><i class="fas fa-backward"></i></button>
+                <button class="ctrl-btn play-btn" id="play-pause-btn"><i class="fas fa-play"></i></button>
+                <button class="ctrl-btn" id="next-btn"><i class="fas fa-forward"></i></button>
+            </div>
+
+            <div class="volume-control">
+                <i class="fas fa-volume-down"></i>
+                <input type="range" id="vol-slider" min="0" max="100" value="40">
+                <i class="fas fa-volume-up"></i>
+            </div>
+
+            <!-- Spotify embed removed -->
+        </div>
+    </div>
+
+    <script type="deb82028733f8206af2cd437-text/javascript">
+        // --- 設定 (保持原本內容) ---
+        const pageTitle = "理性瘋狗 | CY Developer ";
+        const bioText = ["ZY Developer", "From Taiwan", "GMT+8", "BOY", "✡"];
+        const discordInviteCode = "XctA24Bgcw";
+
+        // --- 變數 ---
+        let titleIndex = 0;
+        const enterOverlay = document.getElementById('enter-overlay');
+        const cardContainer = document.getElementById('card-container');
+        const musicWidget = document.getElementById('music-widget'); // 新增
+        const profileCard = document.getElementById('profile-card');
+        const bgVideo = document.getElementById('bg-video');
+        const bgMusic = document.getElementById('bg-music');
+        const volSlider = document.getElementById('vol-slider');
+        const typewriterSpan = document.getElementById('typewriter');
+
+        // Discord 計數器元件
+        const onlineCountSpan = document.getElementById('online-count');
+        const totalCountSpan = document.getElementById('total-count');
+
+        // --- 1. 點擊進入 ---
+        enterOverlay.addEventListener('click', () => {
+            enterOverlay.style.opacity = '0';
+            enterOverlay.style.visibility = 'hidden';
+
+            cardContainer.style.visibility = 'visible';
+            cardContainer.style.opacity = '1';
+
+            // 顯示音樂播放器
+            musicWidget.style.visibility = 'visible';
+            musicWidget.style.opacity = '1';
+
+            // 自動播放 (嘗試)
+            bgVideo.play();
+            bgMusic.volume = volSlider.value / 100;
+            togglePlay();
+
+            // 啟動唱片 JS 動畫 loop
+            requestAnimationFrame(animateRecord);
+
+            initTypewriter();
+            setInterval(scrollTitle, 200);
+
+            // 抓取 Discord 資料
+            fetchDiscordStats();
         });
-      }
-      const tiltCards = document.querySelectorAll('[data-tilt]');
-      tiltCards.forEach(card => {
-        let rect = card.getBoundingClientRect();
-        card.addEventListener('mouseenter', () => { rect = card.getBoundingClientRect(); });
-        card.addEventListener('mousemove', (e) => {
-          if (window.innerWidth < 768) return;
-          const x = e.clientX - rect.left;
-          const y = e.clientY - rect.top;
-          const rotateX = ((y - rect.height/2) / rect.height) * -5;
-          const rotateY = ((x - rect.width/2) / rect.width) * 5;
-          card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+
+        // --- 2. 獲取 Discord 詳細人數 (Online & Total) ---
+        async function fetchDiscordStats() {
+            try {
+                const response = await fetch(`/api/discord-stats/${discordInviteCode}`);
+                const data = await response.json();
+
+                if (data.approximate_presence_count) {
+                    // 格式化數字
+                    const online = new Intl.NumberFormat('en-US').format(data.approximate_presence_count);
+                    const total = new Intl.NumberFormat('en-US').format(data.approximate_member_count);
+
+                    onlineCountSpan.innerText = `${online} Online`;
+                    totalCountSpan.innerText = `${total} Members`;
+                } else {
+                    onlineCountSpan.innerText = "N/A Online";
+                    totalCountSpan.innerText = "";
+                }
+            } catch (error) {
+                console.error("Discord Fetch Error:", error);
+                onlineCountSpan.innerText = "71 Online";
+                totalCountSpan.innerText = "328 Members";
+            }
+        }
+
+        // --- 3. 3D 視差懸浮效果 ---
+        document.addEventListener('mousemove', (e) => {
+            if (window.innerWidth < 768) return;
+
+            const x = (window.innerWidth / 2 - e.pageX) / 20;
+            const y = (window.innerHeight / 2 - e.pageY) / 20;
+
+            const rotateX = Math.max(-15, Math.min(15, y));
+            const rotateY = Math.max(-15, Math.min(15, -x));
+
+            profileCard.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
         });
-        card.addEventListener('mouseleave', () => {
-          card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
+
+        document.addEventListener('mouseleave', () => {
+            profileCard.style.transform = `rotateX(0deg) rotateY(0deg)`;
         });
-      });
-      gsap.utils.toArray('.count-up').forEach(el => {
-        let target = parseInt(el.getAttribute('data-target'));
-        gsap.to(el, { scrollTrigger: { trigger: el, start: 'top 80%' }, innerHTML: target, duration: 2, snap: { innerHTML: 1 }, ease: 'power1.out' });
-      });
-      window.runCmd = function(cmd) {
-        const output = document.getElementById('terminal-output');
-        const newCmd = document.createElement('div');
-        newCmd.className = "mb-2";
-        newCmd.innerHTML = `<span class="text-red-500 mr-2">➜</span><span class="text-white">~ ${cmd}</span>`;
-        output.insertBefore(newCmd, output.lastElementChild);
-        const respEl = document.createElement('div');
-        respEl.innerHTML = `<div class="text-gray-400 pl-6 mb-2">Executing ${cmd}... [SUCCESS]</div>`;
-        output.insertBefore(respEl, output.lastElementChild);
-        output.scrollTop = output.scrollHeight;
-      };
-    });
-  </script>
-</body>
+
+        // --- 4. 標題滾動 ---
+        function scrollTitle() {
+            document.title = pageTitle.substring(titleIndex) + pageTitle.substring(0, titleIndex);
+            titleIndex = (titleIndex + 1) % pageTitle.length;
+        }
+
+        // --- 5. 音樂控制 & Scrubbing ---
+        const recordPlayer = document.getElementById('record-player');
+        const playPauseBtn = document.getElementById('play-pause-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+
+        // --- Status Logic (Rich Presence via Lanyard) ---
+        const DISCORD_USER_ID = '1108004585349599273';
+        const cardAvatar = document.getElementById('card-main-avatar');
+        const cardStatusDot = document.getElementById('card-status-dot');
+        const cardUsername = document.getElementById('card-username');
+        const cardActName = document.getElementById('card-act-name');
+        const cardActDetails = document.getElementById('card-act-details');
+        const cardActState = document.getElementById('card-act-state');
+        const cardAssetBox = document.getElementById('card-asset-box');
+        const cardLargeImg = document.getElementById('card-large-img');
+        const cardSmallImgBox = document.getElementById('card-small-img-box');
+        const cardSmallImg = document.getElementById('card-small-img');
+
+        function updateFromLanyard(lanyardData) {
+            const user = lanyardData.discord_user;
+            const status = lanyardData.discord_status;
+            const activities = lanyardData.activities || [];
+
+            // Update Avatar
+            if (user) {
+                cardUsername.innerText = user.global_name || user.username;
+                const avatarUrl = user.avatar
+                    ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.${user.avatar.startsWith('a_') ? 'gif' : 'png'}?size=256`
+                    : `https://cdn.discordapp.com/embed/avatars/${parseInt(user.discriminator || '0') % 5}.png`;
+                cardAvatar.src = avatarUrl;
+            }
+
+            // Update Status Dot
+            cardStatusDot.className = 'card-status-dot';
+            if (status === 'online') cardStatusDot.classList.add('status-online');
+            else if (status === 'idle') cardStatusDot.classList.add('status-idle');
+            else if (status === 'dnd') cardStatusDot.classList.add('status-dnd');
+            else cardStatusDot.classList.add('status-offline');
+
+            // Find best activity (skip Custom Status for display purposes)
+            const act = activities.find(a => a.type !== 4) || null;
+
+            if (act) {
+                // Activity Type Text
+                const typeMap = { 0: 'Playing', 1: 'Streaming', 2: 'Listening to', 3: 'Watching', 5: 'Competing in' };
+                const typeText = typeMap[act.type] || 'Playing';
+
+                cardActName.innerText = `${typeText} ${act.name}`;
+                cardActDetails.innerText = act.details || '';
+                cardActState.innerText = act.state || '';
+
+                // Assets
+                if (act.assets) {
+                    cardAssetBox.style.display = 'block';
+                    // Large Image
+                    if (act.assets.large_image) {
+                        let largeUrl = act.assets.large_image;
+                        if (largeUrl.startsWith('mp:external')) {
+                            largeUrl = `https://media.discordapp.net/${largeUrl.replace('mp:', '')}`;
+                        } else if (!largeUrl.startsWith('http')) {
+                            largeUrl = `https://cdn.discordapp.com/app-assets/${act.application_id}/${largeUrl}.png`;
+                        }
+                        cardLargeImg.src = largeUrl;
+                    }
+                    // Small Image
+                    if (act.assets.small_image) {
+                        let smallUrl = act.assets.small_image;
+                        if (smallUrl.startsWith('mp:external')) {
+                            smallUrl = `https://media.discordapp.net/${smallUrl.replace('mp:', '')}`;
+                        } else if (!smallUrl.startsWith('http')) {
+                            smallUrl = `https://cdn.discordapp.com/app-assets/${act.application_id}/${smallUrl}.png`;
+                        }
+                        cardSmallImgBox.style.display = 'block';
+                        cardSmallImg.src = smallUrl;
+                    } else {
+                        cardSmallImgBox.style.display = 'none';
+                    }
+                } else {
+                    cardAssetBox.style.display = 'none';
+                }
+            } else {
+                // No activity
+                cardActName.innerText = '';
+                cardActDetails.innerText = '';
+                cardActState.innerText = '';
+                cardAssetBox.style.display = 'none';
+            }
+        }
+
+        async function fetchUserStatus() {
+            try {
+                const res = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`);
+                if (!res.ok) throw new Error('Lanyard API error');
+                const json = await res.json();
+                if (json.success) {
+                    updateFromLanyard(json.data);
+                }
+            } catch (e) {
+                console.log('Lanyard Fetch Error:', e);
+                cardStatusDot.className = 'card-status-dot status-offline';
+                cardActName.innerText = 'Status Unavailable';
+                cardActDetails.innerText = 'Join Lanyard Discord';
+                cardAssetBox.style.display = 'none';
+            }
+        }
+
+        fetchUserStatus();
+        setInterval(fetchUserStatus, 5000); // Refresh every 5s
+
+        // 統一播放控制
+        function togglePlay() {
+            if (bgMusic.paused) {
+                bgMusic.play().then(() => {
+                    // recordPlayer.classList.add('playing'); // 不再使用 CSS class
+                    playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                }).catch(e => console.log("Audio permission:", e));
+            } else {
+                bgMusic.pause();
+                // recordPlayer.classList.remove('playing');
+                playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+            }
+        }
+
+        // 按鈕事件
+        playPauseBtn.addEventListener('click', togglePlay);
+
+        // 上一首/下一首 (目前重置音樂)
+        function restartTrack() {
+            bgMusic.currentTime = 0;
+            if (bgMusic.paused) togglePlay();
+        }
+        prevBtn.addEventListener('click', restartTrack);
+        nextBtn.addEventListener('click', restartTrack);
+
+        // 音量
+        volSlider.addEventListener('input', (e) => {
+            bgMusic.volume = e.target.value / 100;
+        });
+
+        // 唱片 Scrubbing 邏輯 (完全 JS 控制)
+        let isDragging = false;
+        let lastAngle = 0;
+        let currentRotation = 0; // 累積旋轉角度
+        const vinylRecord = recordPlayer.querySelector('.vinyl-record');
+
+        function animateRecord() {
+            if (!bgMusic.paused && !isDragging) {
+                currentRotation += 0.5; // 自轉速度
+            }
+            vinylRecord.style.transform = `rotate(${currentRotation}deg)`;
+            requestAnimationFrame(animateRecord);
+        }
+
+        function getAngle(x, y) {
+            const rect = recordPlayer.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            return Math.atan2(y - centerY, x - centerX) * (180 / Math.PI);
+        }
+
+        recordPlayer.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            recordPlayer.style.cursor = 'grabbing';
+            lastAngle = getAngle(e.clientX, e.clientY);
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+
+            const currentAngle = getAngle(e.clientX, e.clientY);
+            let delta = currentAngle - lastAngle;
+
+            // 處理角度跳變 (例如 179 -> -179)
+            if (delta > 180) delta -= 360;
+            if (delta < -180) delta += 360;
+
+            // 更新視覺旋轉
+            currentRotation += delta;
+
+            /* 
+               Logic Check:
+               Delta > 0 (Clockwise) -> Rewind (Back)
+               Delta < 0 (Counter-Clockwise) -> Forward
+            */
+            const seekSensitivity = 0.2; // 秒/度
+
+            // 只有當旋轉一定幅度才 seek，避免微小抖動
+            if (Math.abs(delta) > 0.1) {
+                if (delta > 0) {
+                    // Clockwise -> Rewind
+                    bgMusic.currentTime = Math.max(0, bgMusic.currentTime - (delta * seekSensitivity));
+                } else {
+                    // Counter-Clockwise -> Forward
+                    // delta is negative here, so subtract negative = add positive
+                    bgMusic.currentTime = Math.min(bgMusic.duration, bgMusic.currentTime - (delta * seekSensitivity));
+                }
+            }
+
+            lastAngle = currentAngle;
+        });
+
+        window.addEventListener('mouseup', () => {
+            if (isDragging) {
+                isDragging = false;
+                recordPlayer.style.cursor = 'grab';
+            }
+        });
+
+        // 移除舊的點擊事件，避免衝突
+        // recordPlayer.addEventListener('click', ...); -> 已移除，改用拖曳或按鈕
+
+        // --- 6. 打字機 ---
+        let textIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        const typingSpeed = 100;
+        const deleteSpeed = 50;
+        const pauseTime = 1500;
+
+        function initTypewriter() {
+            const currentText = bioText[textIndex];
+
+            if (isDeleting) {
+                typewriterSpan.textContent = currentText.substring(0, charIndex - 1);
+                charIndex--;
+            } else {
+                typewriterSpan.textContent = currentText.substring(0, charIndex + 1);
+                charIndex++;
+            }
+
+            let typeSpeedCurrent = isDeleting ? deleteSpeed : typingSpeed;
+
+            if (!isDeleting && charIndex === currentText.length) {
+                typeSpeedCurrent = pauseTime;
+                isDeleting = true;
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                textIndex = (textIndex + 1) % bioText.length;
+                typeSpeedCurrent = 500;
+            }
+
+            setTimeout(initTypewriter, typeSpeedCurrent);
+        }
+
+        // --- 7. 背景粒子 ---
+        const canvas = document.getElementById('canvas-overlay');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 1.5;
+                this.speedY = Math.random() * 0.5 + 0.2;
+                this.speedX = (Math.random() - 0.5) * 0.3;
+                this.opacity = Math.random() * 0.5 + 0.2;
+            }
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+                if (this.y > canvas.height) this.y = 0;
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+            }
+            draw() {
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            for (let i = 0; i < 80; i++) particles.push(new Particle());
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+            }
+            requestAnimationFrame(animateParticles);
+        }
+
+        initParticles();
+        animateParticles();
+        // --- 8. Mouse Trail ---
+        document.addEventListener('mousemove', (e) => {
+            const trail = document.createElement('div');
+            trail.className = 'cursor-trail';
+            trail.style.left = `${e.clientX}px`;
+            trail.style.top = `${e.clientY}px`;
+            document.body.appendChild(trail);
+
+            // Trigger animation
+            requestAnimationFrame(() => {
+                trail.style.opacity = '0';
+                trail.style.transform = 'translate(-5px, -5px) scale(0.5)'; // Drift slightly
+            });
+
+            // Cleanup
+            setTimeout(() => {
+                trail.remove();
+            }, 500);
+        });
+    </script>
+<script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="deb82028733f8206af2cd437-|49" defer></script><script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"eedc53b6d939448eb8dd65181ee96091","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9eb83e5cad1ac8c3',t:'MTc3NjA1OTk1NA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+
 </html>
